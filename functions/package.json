@@ -1,0 +1,7 @@
+{
+  "name": "doctorville-dash-functions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "닥터빌 · 팜빌 운영 대시보드 서버 함수 (Nhost Functions)",
+  "dependencies": {}
+}
