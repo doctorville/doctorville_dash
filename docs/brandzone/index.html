@@ -627,12 +627,15 @@ dl.det dd{margin:0;white-space:pre-wrap;word-break:break-word}
         '</td><td>' + esc(r.applicant_email) + '</td><td>' + (nf ? nf + '개' : '') + '</td></tr>';
     }).join('');
   }
+  // DB(jsonb)는 키 순서를 바꿔 저장하므로 화면·CSV는 구글 폼 문항 순서로 정렬
+  var ORDER = ['신청자 이메일', '사업팀', '담당 PM 이름', '신청 유형', '데모 신청 품목', '구분', '판매사', '제조사', '제품명', '진료과 카테고리', '종류', '주요성분', '키메세지', '서브메세지', '진료과', '보험코드', '선택 첨부 사항', '메인 데모 신청 여부', '데모 신청 알림 메일 받을 담당자', '알림 받을 메일 주소', '알림 담당자 연락처', '알림 담당자 소속', '핸드폰 번호 (선택)', '닥터빌 메인 노출 신청', '닥터빌 메인 데모 게시 시작일', '닥터빌 메인 데모 게시 종료일'];
+  function orderedKeys(o) { var ks = Object.keys(o || {}); return ORDER.filter(function (k) { return ks.indexOf(k) >= 0; }).concat(ks.filter(function (k) { return ORDER.indexOf(k) < 0; })); }
   $('aBody').addEventListener('click', function (e) {
     var tr = e.target.closest('tr[data-id]'); if (!tr) return;
     var r = rows.filter(function (x) { return x.id === tr.dataset.id; })[0]; if (!r) return;
     $('detTitle').textContent = (r.product || '신청') + ' · ' + fdt(r.created_at);
     var h = '<dt>접수 번호</dt><dd>' + esc(String(r.id).slice(0, 8).toUpperCase()) + '</dd><dt>접수 일시</dt><dd>' + fdt(r.created_at) + '</dd>';
-    Object.keys(r.data || {}).forEach(function (k) { if (r.data[k] !== '' && r.data[k] != null) h += '<dt>' + esc(k) + '</dt><dd>' + esc(r.data[k]) + '</dd>'; });
+    orderedKeys(r.data).forEach(function (k) { if (r.data[k] !== '' && r.data[k] != null) h += '<dt>' + esc(k) + '</dt><dd>' + esc(r.data[k]) + '</dd>'; });
     var fs = r.files || [];
     if (fs.length || r.folder_url) {
       h += '<dt>첨부 파일</dt><dd>' + fs.map(function (f) { return esc(f.field) + ': <a href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.name) + '</a>'; }).join('<br>') +
@@ -646,8 +649,9 @@ dl.det dd{margin:0;white-space:pre-wrap;word-break:break-word}
 
   $('aCsv').addEventListener('click', function () {
     var list = filtered(); if (!list.length) return;
-    var keys = ['접수 일시', '접수 번호'], seen = {};
-    list.forEach(function (r) { Object.keys(r.data || {}).forEach(function (k) { if (!seen[k]) { seen[k] = 1; keys.push(k); } }); });
+    var seen = {};
+    list.forEach(function (r) { Object.keys(r.data || {}).forEach(function (k) { seen[k] = 1; }); });
+    var keys = ['접수 일시', '접수 번호'].concat(orderedKeys(seen));
     keys.push('첨부 파일', '드라이브 폴더');
     var q = function (v) { v = String(v == null ? '' : v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
     var lines = [keys.map(q).join(',')].concat(list.map(function (r) {
