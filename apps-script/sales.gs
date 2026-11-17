@@ -6,6 +6,7 @@
  *                    + 'raw' 탭의 '예측' 열(11·12월 등)을 예정 매출로 함께 보냄
  *   - [(매출) 4Q]·[(매출)]·[(손익)] 탭 : 시트 탭의 표시값·병합·서식을 보냄 → 대시보드가 같은 구성(목표대비·전년대비·월별·손익)의 화면으로 다시 그림
  *     (숨긴 열도 hc 표시와 함께 보냄 — 묶음 제목·4분기 실적 등 숨긴 열 값도 대시보드 표에 쓰기 위함)
+ *   ※ v4 (2026-11-17): 탭 격자에 숫자 원값 nv 추가 — 대시보드 [매출]·[손익] 탭 계산용
  * 적요(세부 내역)·담당자는 보내지 않습니다.
  *
  * 설치 (Code.gs 는 바꿀 필요 없음 — 기존 doPost 의 action:'sales' 줄을 그대로 사용)
@@ -24,9 +25,9 @@ var SALES_CACHE_SEC = 600;
 function salesData_(fresh) {
   var cache = CacheService.getScriptCache();
   if (!fresh) {
-    var n = Number(cache.get('sales2:n') || 0);
+    var n = Number(cache.get('sales4:n') || 0);
     if (n) {
-      var parts = []; for (var i = 0; i < n; i++) parts.push(cache.get('sales2:' + i));
+      var parts = []; for (var i = 0; i < n; i++) parts.push(cache.get('sales4:' + i));
       if (parts.every(function (p) { return p != null; })) { try { return JSON.parse(parts.join('')); } catch (e) {} }
     }
   }
@@ -49,8 +50,8 @@ function salesData_(fresh) {
   });
   try {
     var j = JSON.stringify(out), size = 90000, keys = {}, k = 0;
-    for (var p = 0; p < j.length; p += size) keys['sales2:' + (k++)] = j.slice(p, p + size);
-    if (k <= 20) { keys['sales2:n'] = String(k); cache.putAll(keys, SALES_CACHE_SEC); }
+    for (var p = 0; p < j.length; p += size) keys['sales4:' + (k++)] = j.slice(p, p + size);
+    if (k <= 20) { keys['sales4:n'] = String(k); cache.putAll(keys, SALES_CACHE_SEC); }
   } catch (e) {}
   return out;
 }
@@ -182,8 +183,11 @@ function salesView_(sh) {
     cols.forEach(function (x) { if (x >= c0 && x <= c1) { if (b == null) b = ci[x]; cs++; } });
     if (a != null && b != null && (rs > 1 || cs > 1)) merges.push([a, b, rs, cs]);
   });
+  // nv: 숫자 칸의 원래 값 [행 i, 열 j, 값] (표시값은 소수 1자리로 반올림돼 있어 대시보드 계산용으로 따로 보냄)
+  var nv = [];
+  rows.forEach(function (r0, i) { cols.forEach(function (c0, j) { var x = val[r0 - 1][c0 - 1]; if (typeof x === 'number' && isFinite(x) && x !== 0) nv.push([i, j, Math.round(x * 1e6) / 1e6]); }); });
   return { name: sh.getName(), gid: sh.getSheetId(), w: cols.map(function (c0) { return sh.getColumnWidth(c0); }), h: [],   // 행 높이는 기본값 사용(호출 수를 줄여 속도 확보)
-    cl: cols.map(salesColName_), rl: rows, hc: cols.map(function (c0) { return hid[c0] ? 1 : 0; }), st: styles, cells: cells, merges: merges };
+    cl: cols.map(salesColName_), rl: rows, hc: cols.map(function (c0) { return hid[c0] ? 1 : 0; }), st: styles, cells: cells, merges: merges, nv: nv };
 }
 function salesBg_(b) { return b && !/^#f{6}$/i.test(b) ? b : ''; }
 function salesColName_(c) { var s = ''; while (c > 0) { var m = (c - 1) % 26; s = String.fromCharCode(65 + m) + s; c = Math.floor((c - 1) / 26); } return s; }
