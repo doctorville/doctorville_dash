@@ -825,6 +825,287 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 .nav-svc.nav-cat ~ .nav-item { padding-left: 30px; }
 .nav-svc.nav-cat ~ .nav-item::before { left: 16px; width: 7px; }
 .nav-sep { height: 1px; background: var(--border); margin: 12px 8px 6px; }
+/* ---- 매출 [매출]·[손익] 탭 (닥터빌사업부 매출/손익 현황 양식) ---- */
+#slx{--bg:#ffffff;--card:#fff;--ink:#0f2438;--mute:#5b7289;--line:#dbe7f2;--head:#eaf3fb;--tint:#f1f8fd;--brand:#1e66b2;--brand2:#01c8ff;--mint:#1ee4af;--rule:#1e66b2;--up:#0b9a72;--down:#e5484d;--shadow:0 4px 18px rgba(30,102,178,.08);--fc:#a8e6fb;--target:#1e66b2;--prev:#8aa0b5;--accent:var(--brand2);--fg:var(--ink);--muted:var(--mute);--surface:var(--card);--good:var(--up);color:var(--ink);font-size:13px;line-height:1.5}
+#slx *{box-sizing:border-box}
+#slx .slx-ban{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 22px;margin-bottom:22px;padding:14px 24px;border-radius:18px;background:linear-gradient(120deg,#eaf6ff 0%,#e3f7fb 55%,#dcf8ee 100%);color:#0f2438;box-shadow:var(--shadow)}
+#slx .slx-ban h2{font-size:20px;margin:0;font-weight:700;letter-spacing:-.2px}
+#slx .slx-ban p{color:#5b7289;font-size:12px;margin:2px 0 0}
+#slx .slx-ban .btn{white-space:nowrap}
+#slx .slx-warn{font-size:12px;color:#8a5a00;background:#fff6e0;border-radius:8px;padding:8px 12px;margin:0 0 18px}
+#slx button.b:focus-visible, #slx .dd tr.n:focus-visible{outline:2px solid var(--brand2);outline-offset:1px}
+#slx .card{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 4px;margin-bottom:48px;min-width:0}
+#slx .card h2{font-size:15px;margin:0 0 10px;font-weight:700}
+#slx .card h2::before{content:"■";color:var(--brand2);font-size:.75em;margin-right:7px;vertical-align:1px}
+#slx .sumgrid{display:grid;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));margin-bottom:28px;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule);background:var(--card)}
+#slx .sc{border-left:1px solid var(--line);padding:16px 22px;min-width:0}
+#slx .sc:first-child{border-left:none}
+@media(max-width:900px){
+  #slx .sumgrid{grid-template-columns:1fr}
+  #slx .sc{border-left:none;border-top:1px solid var(--line)}
+  #slx .sc:first-child{border-top:none}
+}
+#slx .sc-t{font-size:13px;font-weight:700;color:var(--brand)}
+#slx .sc-v{font-size:26px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.4px}
+#slx .sc-v small{font-size:12px;font-weight:500;color:var(--mute);margin-left:4px}
+#slx .sc-g{font-size:13px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+#slx .sc-d{font-size:11.5px;color:var(--mute);margin-top:4px;font-variant-numeric:tabular-nums}
+#slx .sc-d b{font-weight:600;color:var(--ink)}
+#slx .sc-d + .sc-d{margin-top:1px}
+#slx .sc-v + .sc-d{margin-top:6px}
+#slx .sc.hero{background:linear-gradient(180deg,var(--tint),transparent)}
+#slx .up{color:var(--up)}
+#slx .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--mute);margin-bottom:8px}
+#slx .legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+#slx .legend i.ln{height:0;border-top:2px solid var(--target);border-radius:0;width:16px;vertical-align:3px}
+#slx .legend i.ln2{height:0;border-top:2px dashed var(--prev);border-radius:0;width:16px;vertical-align:3px}
+#slx svg text{font-family:var(--font)}
+#slx .scroll{overflow-x:auto}
+#slx table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+#slx th, #slx td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
+#slx th{font-weight:600;color:var(--brand);font-size:12px;background:var(--head)}
+#slx th:first-child, #slx td:first-child{text-align:left}
+#slx thead tr.grp th{text-align:center;border-bottom:1px solid var(--line)}
+#slx table:not(#ddt) tbody tr:hover td{background:var(--head)}
+#slx tr.h td{font-weight:700;background:var(--head)}
+#slx td.sub1{padding-left:24px}
+#slx td.up{font-weight:700}
+#slx .note{font-size:11px;color:var(--mute);margin:8px 0 0}
+#slx .bar{height:8px;background:var(--head);border-radius:4px;min-width:80px}
+#slx .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--brand2),var(--mint));border-radius:4px}
+#slx .src{font-size:11px;color:var(--mute);line-height:1.7;margin:0 4px;padding-bottom:56px}
+#slx .cumbtn, #slx button.b{font:600 12px var(--font);padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer}
+#slx .cumbtn:hover, #slx button.b:hover{color:var(--brand);border-color:var(--brand2)}
+#slx .dd-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+#slx .dd-bar p{margin:0;font-size:12px;color:var(--mute)}
+#slx .btns{display:flex;gap:6px;flex-wrap:wrap}
+#slx .dd, #slx .chartcard{--in:#1e66b2;--ex:#14c99b;--in-s:#d9e8f8;--ex-s:#d3f6ea;--in-m:#eef5fc;--ex-m:#eafaf4}
+#slx .dd table{border-collapse:separate;border-spacing:0 3px}
+#slx .dd th, #slx .dd td{border-bottom:0}
+#slx .dd th:first-child{position:sticky;left:0;z-index:2}
+#slx .dd td:first-child{position:sticky;left:0;z-index:1;min-width:150px}
+#slx .dd tr.n{cursor:pointer}
+#slx .dd tr.l0 td{font-weight:700;background:var(--c-s)}
+#slx .dd tr.l1 td{background:var(--c-m)}
+#slx .dd tr.l2 td{background:var(--card);color:var(--mute);font-size:12.5px}
+#slx .dd tr.in{--c-s:var(--in-s);--c-m:var(--in-m);--rail:var(--in)}
+#slx .dd tr.ex{--c-s:var(--ex-s);--c-m:var(--ex-m);--rail:var(--ex)}
+#slx .dd tr.l0 td:first-child{border-left:6px solid var(--rail);border-radius:6px 0 0 6px}
+#slx .dd tr.l1 td:first-child{padding-left:22px;border-left:6px solid var(--rail);border-radius:6px 0 0 6px}
+#slx .dd tr.l2 td:first-child{padding-left:38px;border-left:6px solid var(--rail);border-radius:6px 0 0 6px}
+#slx .dd tr td:last-child{border-radius:0 6px 6px 0}
+#slx .dd .car{display:inline-block;width:14px;color:var(--mute);transition:transform .15s}
+#slx .dd tr.open>td:first-child .car{transform:rotate(90deg)}
+#slx .dd td.z{color:color-mix(in srgb,var(--mute) 45%,transparent)}
+#slx .dd tr.tot td{font-weight:700;background:var(--head);color:var(--brand)}
+@media (prefers-reduced-motion:reduce){
+  #slx .dd .car{transition:none}
+}
+@media (max-width:520px){
+  #slx .sc-v{font-size:22px}
+}
+#slx .sc .st{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#slx .sc .st em{font-style:normal;font-size:11.5px;color:var(--mute);font-weight:500}
+#slx .blk{margin-top:12px;padding-top:12px;border-top:2px solid color-mix(in srgb,var(--brand) 45%,var(--line))}
+#slx .lab{font-size:11.5px;color:var(--mute);font-weight:600}
+#slx .lab i{font-style:normal;font-weight:400}
+#slx .blk .sc-v{margin-top:2px}
+#slx .sc-v.na{color:var(--mute)}
+#slx th.fcst{background:color-mix(in srgb,var(--brand2) 22%,var(--head))}
+#slx .dd td.fcst{background-image:linear-gradient(color-mix(in srgb,var(--brand2) 10%,transparent),color-mix(in srgb,var(--brand2) 10%,transparent))}
+#slx .dd tr.l2.fr td{font-style:italic}
+#slx td.na{color:color-mix(in srgb,var(--mute) 60%,transparent)}
+#slx tr.pct td{color:var(--mute)}
+#slx .src .copy{margin-top:14px;padding-top:0;text-align:center;font-size:12px;color:var(--mute);letter-spacing:.02em}
+#slx .vr{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#slx .share{display:flex;align-items:baseline;gap:6px;padding:5px 14px;border-radius:999px;background:var(--head);color:var(--brand);white-space:nowrap}
+#slx .share span{font-size:12px;font-weight:600}
+#slx .share b{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+#slx .sc.em{background:linear-gradient(180deg,color-mix(in srgb,var(--brand2) 16%,transparent),transparent 70%);box-shadow:inset 0 4px 0 var(--brand2)}
+#slx .sc.em .sc-t{font-size:15px}
+#slx .sc.em .st em{font-weight:700;color:var(--brand)}
+#slx .sc.em .sc-v{font-size:38px;color:var(--brand)}
+#slx tr.em td{color:var(--brand);font-size:14px}
+#slx .kg{display:grid;grid-template-columns:196px repeat(var(--cols,3),minmax(0,1fr));margin-bottom:48px;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule)}
+#slx .kg>div{grid-column:var(--c);grid-row:var(--r);min-width:0;padding:14px 22px}
+#slx .kg .rl0, #slx .kg .rl{padding-left:6px;padding-right:12px}
+#slx .kg .rl{display:flex;flex-direction:column;justify-content:center;gap:2px;border-top:1px solid var(--line)}
+#slx .kg .rl b{font-size:14px;font-weight:700;color:var(--ink)}
+#slx .kg .rl i{font-style:normal;font-size:11.5px;color:var(--mute);white-space:nowrap}
+#slx .kg .ct{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px;font-weight:700;color:var(--brand);border-left:1px solid var(--line)}
+#slx .kg .ct em{font-style:normal;font-size:11.5px}
+#slx .kg .cell{border-left:1px solid var(--line);border-top:1px solid var(--line)}
+#slx .kg .cell .sc-v{margin-top:0}
+#slx .kg .mlab{display:none;font-size:11.5px;font-weight:600;color:var(--mute);margin-bottom:2px}
+@media(max-width:900px){
+  #slx .kg{grid-template-columns:1fr}
+  #slx .kg>div{grid-column:1;grid-row:auto}
+  #slx .kg .rl0, #slx .kg .rl{display:none}
+  #slx .kg .ct{border-left:none;border-top:2px solid var(--rule)}
+  #slx .kg .ct:first-of-type{border-top:none}
+  #slx .kg .cell{border-left:none}
+  #slx .kg .mlab{display:block}
+}
+#slx .ft table{border-collapse:separate;border-spacing:0 3px;font-size:13px}
+#slx .ft th, #slx .ft td{border-bottom:0;padding:8px 10px;vertical-align:top;text-align:right}
+#slx .ft thead th{vertical-align:middle;white-space:nowrap}
+#slx .ft thead th small{display:block;font-size:10px;font-weight:500;color:var(--mute)}
+#slx .ft th:first-child, #slx .ft td.lab{position:sticky;left:0;z-index:2;text-align:left;min-width:132px}
+#slx .ft tbody tr:hover td{background:revert}
+#slx .ft tr.in{--rail:var(--in);--s:var(--in-s);--m:var(--in-m)}
+#slx .ft tr.ex{--rail:var(--ex);--s:var(--ex-s);--m:var(--ex-m)}
+#slx .ft tr.gr td{background:var(--s);font-weight:700;vertical-align:middle}
+#slx .ft tr.it td{background:var(--m)}
+#slx .ft tr.it td.lab{background:var(--card);vertical-align:middle}
+#slx .ft tr.gr td.lab, #slx .ft tr.it td.lab{border-left:6px solid var(--rail);border-radius:6px 0 0 6px}
+#slx .ft tr.it td.lab span{font-weight:700;display:block}
+#slx .ft tr.it td.lab small{color:var(--mute);font-size:11px}
+#slx .ft td.mc{min-width:116px}
+#slx .ft .tv{font-weight:600}
+#slx .ft .tv.z{color:color-mix(in srgb,var(--mute) 50%,transparent);font-weight:400}
+#slx .ft .cl{display:flex;justify-content:space-between;gap:8px;margin-top:3px;font-size:11.5px;line-height:1.35;border-radius:4px;padding:1px 5px;color:var(--mute)}
+#slx .ft .cl span{max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+#slx .ft .cl b{font-weight:500;font-variant-numeric:tabular-nums}
+#slx .ft .cl.main{background:color-mix(in srgb,var(--rail) 26%,transparent);color:var(--ink)}
+#slx .ft .cl.main b{font-weight:600}
+#slx .ft td.fc, #slx .ft th.fc{border-left:1px dashed color-mix(in srgb,var(--mute) 45%,transparent);border-right:1px dashed color-mix(in srgb,var(--mute) 45%,transparent);min-width:64px}
+#slx .ft tr.gr td.fc, #slx .ft tr.tt td.fc{background-color:color-mix(in srgb,var(--s,var(--head)) 70%,var(--card))}
+#slx .ft td.iv{color:var(--mute);vertical-align:middle}
+#slx .ft tr.it td.sm, #slx .ft tr.it td.sh, #slx .ft tr.it td.g{vertical-align:middle}
+#slx .ft td.sm{font-variant-numeric:tabular-nums}
+#slx .ft td.g.up{color:var(--up);font-weight:700}
+#slx .ft td.g{color:var(--mute)}
+#slx .ft tr.tt td{background:var(--head);font-weight:700;color:var(--brand);vertical-align:middle}
+#slx .ft tr.tt td.lab{border-radius:6px 0 0 6px}
+#slx .ft tr td:last-child{border-radius:0 6px 6px 0}
+#slx .kg .em{background:var(--tint)}
+#slx .kg .ct.exk{color:var(--up)}
+#slx .kg .ct.allk{color:var(--ink)}
+#slx .kg .exk .share{background:color-mix(in srgb,#14c99b 16%,var(--card));color:var(--up)}
+#slx .kg .ct.em{box-shadow:inset 0 3px 0 var(--brand)}
+#slx .kg .ct.em em{background:var(--brand);color:#fff;padding:1px 10px;border-radius:999px;font-size:11px;font-weight:600}
+#slx .kg .cell.em .sc-v{font-size:34px;color:var(--brand)}
+#slx .pt h2 small{font-size:12px;font-weight:400;color:var(--mute);margin-left:8px}
+#slx .pt{--navy:#12345a}
+#slx .pt table{border-collapse:separate;border-spacing:0;min-width:1180px;font-size:13px}
+#slx .sum3{list-style:none;margin:0 0 38px;padding:0}
+#slx .sum3 li{display:flex;gap:14px;align-items:baseline;padding:4px 6px;font-size:13.5px;color:var(--ink);line-height:1.6}
+#slx .sum3 .n{flex:0 0 22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-style:normal;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;align-self:center}
+#slx .sum3 b{flex:0 0 112px;font-weight:700;font-size:13.5px;text-align:center;padding:3px 0;border-radius:999px;align-self:center}
+#slx .sum3 b.up{background:color-mix(in srgb,var(--brand) 13%,var(--card));color:var(--brand)}
+#slx .sum3 b.dn{background:color-mix(in srgb,var(--down) 13%,var(--card));color:color-mix(in srgb,var(--down) 85%,#000)}
+#slx .sum3 li:has(b.dn) .n{background:color-mix(in srgb,var(--down) 85%,#000)}
+#slx .sum3.w b{flex-basis:148px}
+#slx .sum3 em{font-style:normal;font-weight:700}
+@media(max-width:700px){
+  #slx .sum3 li{flex-wrap:wrap;gap:6px 10px}
+  #slx .sum3 b{flex:none;padding:3px 12px}
+  #slx .sum3 li span{flex:1 0 100%}
+}
+#slx .pt{margin-top:0}
+#slx .ptools{display:flex;justify-content:flex-end;margin:0 0 8px}
+#slx .ptools button{font:inherit;font-size:12.5px;font-weight:600;color:var(--brand);background:var(--head);border:0;border-radius:999px;padding:5px 14px;cursor:pointer}
+#slx .ptools button:hover{background:color-mix(in srgb,var(--head) 80%,var(--brand) 20%)}
+#slx .ptools .pm{display:inline-block;width:14px;font-weight:700}
+#slx .st h2 small{font-weight:400;color:var(--mute);font-size:12px;margin-left:8px}
+#slx .st th, #slx .st td{padding:10px 3px}
+#slx .st tr.r1 td.lb{padding-left:30px}
+#slx .st tr.r2 td.lb{padding-left:46px}
+#slx .st thead th.lb{padding-left:6px}
+#slx .st table{font-size:12.5px}
+#slx .st table{min-width:0}
+#slx .st .mx{display:none}
+#slx .st.onx th.mx, #slx .st.onx td.mx{display:table-cell}
+#slx .st.onx table{width:max-content;table-layout:fixed}
+#slx .st thead th small{display:block;font-size:9.5px;font-weight:400;color:var(--mute)}
+#slx .st td.fc{color:var(--mute)}
+#slx .st tr.rt td.fc, #slx .st tr.r1 td.fc{font-weight:500}
+#slx .pt .chip.in{background:color-mix(in srgb,var(--brand) 13%,var(--card));color:var(--brand)}
+#slx .pt .chip.ex{background:color-mix(in srgb,#14c99b 16%,var(--card));color:var(--up)}
+#slx .pt td.sh.key.exg{color:var(--up)}
+#slx .pt td.d .chip{background:color-mix(in srgb,var(--down) 13%,var(--card));color:color-mix(in srgb,var(--down) 85%,#000);padding:1px 8px;font-weight:700}
+#slx .pt .m25{display:none}
+#slx .pt.on25 table{width:max-content;table-layout:fixed}
+#slx .pt.on25 th.m25, #slx .pt.on25 td.m25{display:table-cell}
+#slx .pt th, #slx .pt td{padding:10px 10px;text-align:right;border-bottom:0;font-variant-numeric:tabular-nums;vertical-align:middle;white-space:nowrap}
+#slx .pt thead th{background:var(--card);color:var(--mute);font-weight:500;font-size:11.5px;padding:5px 10px}
+#slx .pt thead th.gh{background:var(--head);color:var(--brand);font-weight:700;font-size:13px;text-align:center;padding:9px 12px;border-bottom:2px solid var(--brand)}
+#slx .yc{font-style:normal;font-weight:700;font-size:1.12em;background:#e3e8ee;color:#4a5b6c;border-radius:4px;padding:2px 9px;margin-right:3px}
+#slx #slxPl tr.g1 th.gh{border-top:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tr.g1 th.gh:nth-child(2), #slx #slxPl tr.g1 th.gh:nth-child(4), #slx #slxPl tr.g1 th.gh:nth-child(6){border-left:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tr.g1 th.gh:nth-child(4), #slx #slxPl tr.g1 th.gh:nth-child(6){border-right:0}
+#slx #slxPl tr.g1 th.gh:nth-child(4){border-right:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tr.g2 th:nth-child(1), #slx #slxPl tr.g2 th:nth-child(5), #slx #slxPl tr.g2 th:nth-child(7), #slx #slxPl tbody td:nth-child(2), #slx #slxPl tbody td:nth-child(6), #slx #slxPl tbody td:nth-child(9){border-left:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tr.g2 th:nth-child(6), #slx #slxPl tr.g2 th:nth-child(16), #slx #slxPl tbody td:nth-child(7), #slx #slxPl tbody td:nth-child(18){border-right:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tbody tr:last-child td:not(.gap){border-bottom:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl thead th.gh, #slx #slxPl thead th.gh.gm{border-bottom:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tbody tr:first-child td:not(.gap){border-top:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxPl tbody tr:last-child td.lb{border-bottom:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .kg .rl .yc{font-size:18px;font-weight:700;padding:0;background:none;color:inherit;border-radius:0;margin-right:4px}
+#slx .kg .rl .yb{font-size:18px;font-weight:700}
+#slx #slxPl tbody td.lb{border-left:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx #slxT1 tr.g2 th:nth-child(14), #slx #slxT1 tbody td:nth-child(15), #slx #slxT2 tr.g2 th:nth-child(16), #slx #slxT2 tbody td:nth-child(17), #slx .st tr.g1 th.gh:nth-child(4){border-right:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .kg b.ng{color:var(--down)}
+#slx .pt thead th.gh.gd{background:color-mix(in srgb,var(--head) 88%,var(--brand2) 6%)}
+#slx .pt thead th.gh.gm{background:color-mix(in srgb,var(--mute) 12%,var(--card));color:var(--mute);border-bottom-color:var(--mute)}
+#slx .pt .chip{display:inline-block;padding:2px 10px;border-radius:999px;background:color-mix(in srgb,var(--down) 13%,var(--card));color:color-mix(in srgb,var(--down) 85%,#000);font-weight:700}
+#slx .pt .chip.big{font-size:15px;padding:2px 12px}
+#slx .pt tr.r2.hot td.d.pos, #slx .pt tr.r2.hot td.d{color:color-mix(in srgb,var(--down) 85%,#000);font-weight:700}
+#slx .pt thead th.lb{background:var(--card);vertical-align:bottom;color:var(--ink);font-size:13px;font-weight:700}
+#slx .pt .lb{position:sticky;left:0;z-index:2;text-align:left;min-width:190px}
+#slx .pt td.lb{background:var(--card)}
+#slx .pt .gap{width:18px;min-width:18px;padding:0;border-bottom:0;background:var(--card)}
+#slx .pt th.sh{text-align:left;padding-left:2px}
+#slx .pt td.sh{color:var(--mute);font-size:12px;text-align:left;padding-left:2px}
+#slx .pt td.d.pos{color:var(--brand);font-weight:600}
+#slx .pt td.d.neg{color:var(--down);font-weight:600}
+#slx .pt tr.rt td{background:var(--head);font-weight:700}
+#slx .pt tr.rt td.gap{background:var(--card)}
+#slx .pt tr.rt td.lb{padding-left:14px;font-size:14px}
+#slx .pt tr.r1 td{font-weight:700;background:var(--tint)}
+#slx .pt tr.r1 td.gap{background:var(--card)}
+#slx .pt tr.r1 td.lb{padding-left:36px;background:linear-gradient(90deg,var(--head) 0 18px,var(--tint) 18px)}
+#slx .pt tr.r2 td{background:var(--card);font-size:11.5px;color:var(--mute)}
+#slx .pt tr.r2 td.d.pos{color:var(--mute);font-weight:500}
+#slx .pt tr.r2 td.gap{background:var(--card)}
+#slx .pt tr.r2 td.lb{padding-left:60px;color:var(--mute);background:linear-gradient(90deg,var(--head) 0 18px,var(--tint) 18px 40px,var(--card) 40px)}
+#slx .pt tr.r2 td.d{font-weight:500}
+#slx .st .sthead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+#slx .st .sthead h2{margin:0;font-size:16px}
+#slx .st .sthead h2::before{content:none}
+#slx .st .sthead .ptools{margin:0}
+#slx .st th.gh+th.gh, #slx #slxT1 tr.g2 th:nth-child(1), #slx #slxT1 tr.g2 th:nth-child(6), #slx #slxT1 tr.g2 th:nth-child(11), #slx #slxT1 tbody td:nth-child(2), #slx #slxT1 tbody td:nth-child(7), #slx #slxT1 tbody td:nth-child(12), #slx #slxT2 tr.g2 th:nth-child(1), #slx #slxT2 tr.g2 th:nth-child(7), #slx #slxT2 tr.g2 th:nth-child(13), #slx #slxT2 tbody td:nth-child(2), #slx #slxT2 tbody td:nth-child(8), #slx #slxT2 tbody td:nth-child(14){border-left:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st tr.g1 th.gh{border-top:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st thead th.gh{border-bottom:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st tbody tr:first-child td{border-top:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st th.lb, #slx .st td.lb{border-left:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st thead th.lb{border-top:0;border-left:0}
+#slx .st tbody tr:last-child td{border-bottom:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st tr.g1 th.gh:nth-child(2){border-left:1px solid color-mix(in srgb,var(--mute) 30%,var(--card))}
+#slx .st th.gh.gm, #slx .st th.gh.mx{border-left:0}
+#slx .st td.ref, #slx .st th.ref{color:color-mix(in srgb,var(--mute) 55%,var(--card))!important;font-weight:400!important}
+#slx .st td.sh.key.ref{color:color-mix(in srgb,var(--mute) 55%,var(--card))!important}
+#slx .pt tr.r1.gx td{background:color-mix(in srgb,#14c99b 12%,var(--card))}
+#slx .pt tr.r1.gx td.gap{background:var(--card)}
+#slx .pt tr.r1.gx td.lb{background:linear-gradient(90deg,color-mix(in srgb,#14c99b 24%,var(--card)) 0 18px,color-mix(in srgb,#14c99b 12%,var(--card)) 18px)}
+#slx .pt tr.r2.gx td.lb{background:linear-gradient(90deg,color-mix(in srgb,#14c99b 24%,var(--card)) 0 18px,color-mix(in srgb,#14c99b 12%,var(--card)) 18px 40px,var(--card) 40px)}
+#slx .pt tr.r2.gx td.gap{background:var(--card)}
+#slx #slxChart svg .hit{fill:transparent;cursor:pointer}
+#slx #slxChart svg .hit:hover{fill:color-mix(in srgb,var(--brand2) 9%,transparent)}
+#slx #slxChart svg .hit:focus{outline:none}
+#slx #slxChart svg .hit:focus-visible{stroke:var(--brand2);stroke-width:2}
+#slx #slxChart svg .selband{fill:color-mix(in srgb,var(--brand2) 13%,transparent);pointer-events:none}
+#slx .kg .rl i.fcn{color:var(--brand)}
+#slx .chart-hint{font-size:11.5px;color:var(--mute);margin:0 0 4px;text-align:right}
+#slx .pt td.sh.key{color:var(--brand);font-weight:700;font-size:15px}
+#slx .pt tr.rt td.d{font-size:13px}
+#slx .card{background:none;box-shadow:none;border-radius:0;border-left:0;border-right:0}
+#slx .scroll{max-height:none;overflow-x:auto;overflow-y:visible}
+#slx .scroll thead th:not(.lb){position:static}
+#slx td.key{display:table-cell;border:0;border-radius:0;background:none;padding-top:10px;padding-bottom:10px;margin:0;gap:0}
+#slx .legend span{display:inline-flex;align-items:center}
+#slx .empty{padding:24px;color:var(--mute)}
+#slx h2{color:var(--ink)}
 </style>
 </head>
 <body class="locked">
@@ -1047,6 +1328,10 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
       <div class="slsheet-head"><div><h2 id="slSheetTitle"></h2><p id="slSheetSub"></p></div><a class="btn" id="slSheetLink" target="_blank" rel="noopener">시트에서 열기</a></div>
       <div id="slSheetEmpty" class="empty" hidden></div>
       <div id="slRepBox"></div>
+    </section>
+    <section id="slx" hidden>
+      <div class="slx-ban"><div><h2 id="slxTitle"></h2><p id="slxSub"></p></div><a class="btn" id="slxLink" target="_blank" rel="noopener" hidden>시트에서 열기</a></div>
+      <div id="slxBody"></div>
     </section>
     <section class="sltop">
       <div class="sec-head">
@@ -3733,7 +4018,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     if (VIEW !== 'sales') { if (VIEW === 'home' || VIEW === 'report') renderHome(); return; }
     var d = SL.data;
     $('#slEmpty').hidden = !!d; document.querySelectorAll('#salesApp .sldata').forEach(function (s) { s.hidden = !d; });
-    if (!d) { $('#slSheet').hidden = true; document.querySelectorAll('#salesApp .sltop').forEach(function (el) { el.hidden = false; }); $('#slEmpty').textContent = SL.err || (SL.loading ? '불러오는 중…' : '데이터가 없습니다. 상단 [갱신]을 눌러 주세요.'); setSalesHeader(); return; }
+    if (!d) { $('#slSheet').hidden = true; $('#slx').hidden = true; document.querySelectorAll('#salesApp .sltop').forEach(function (el) { el.hidden = false; }); $('#slEmpty').textContent = SL.err || (SL.loading ? '불러오는 중…' : '데이터가 없습니다. 상단 [갱신]을 눌러 주세요.'); setSalesHeader(); return; }
     var ys = slYears();
     if (!SL.year || ys.indexOf(SL.year) < 0) SL.year = ys.indexOf(slNow().slice(0, 4)) >= 0 ? slNow().slice(0, 4) : ys[ys.length - 1];
     $('#slYear').innerHTML = ys.slice().reverse().map(function (y) { return '<option value="' + y + '">' + y + '년</option>'; }).join(''); $('#slYear').value = SL.year;
@@ -3749,17 +4034,358 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   // 상단 탭: [대시보드] + 시트 탭((매출) 4Q·(매출)·(손익)) — 시트 탭은 Apps Script가 보낸 격자를 그대로 그림
   function slViews() { return SL.data && SL.data.views ? SL.data.views : []; }
   function slTabsRender() {
-    var vs = slViews(), names = vs.map(function (v) { return v.name; });
-    if (SL.tab !== 'dash' && names.indexOf(SL.tab) < 0) SL.tab = 'dash';
-    $('#slTabs').innerHTML = '<button type="button" role="tab" data-tab="dash" aria-selected="' + (SL.tab === 'dash') + '">대시보드</button>' +
-      vs.map(function (v) { return '<button type="button" role="tab" data-tab="' + esc(v.name) + '" aria-selected="' + (SL.tab === v.name) + '">' + esc(v.name) + '</button>'; }).join('');
+    var tabs = [['dash', '대시보드'], ['sales', '매출'], ['pl', '손익']];
+    if (!tabs.some(function (t) { return t[0] === SL.tab; })) SL.tab = 'dash';
+    $('#slTabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + (SL.tab === t[0]) + '">' + t[1] + '</button>'; }).join('');
     $('#slTabs').querySelectorAll('button').forEach(function (b) { b.onclick = function () { SL.tab = b.dataset.tab; try { localStorage.setItem('mv-sales-tab', SL.tab); } catch (e) {} renderSales(); }; });
     var sheet = SL.tab !== 'dash';
-    $('#slSheet').hidden = !sheet;
+    $('#slSheet').hidden = true; $('#slx').hidden = !sheet;
     document.querySelectorAll('#salesApp .sldata, #salesApp .sltop').forEach(function (el) { el.hidden = sheet; });
     if (!sheet) return false;
-    renderSlRep(vs[names.indexOf(SL.tab)]);
+    SLX.tab = SL.tab; renderSlx();
     return true;
+  }
+  // ---- 매출 화면 상단 탭 [매출]·[손익] (2026-11-17, 「닥터빌사업부 매출/손익 현황」 양식) ----------------
+  //   데이터: sales.gs가 보내는 시트 탭 격자 views — (매출) 탭(목표 대비·전년 대비 표), (손익) 탭(손익 표)
+  //           숫자는 nv(원래 값, sales.gs v4) 우선, 없으면 표시값을 읽음. 차트 주석의 고객사는 raw (세부) 행(SL.data.years)
+  //   양식(요약 3줄·KPI·월별 추이·표 2개·손익 표)은 업로드한 화면과 같게, 숫자·문장은 시트 값으로 매번 계산
+  var SLX = { tab: 'sales', mon: null, open1: false, open2: false, open25: false };
+  var SLX_REN = { '라이브세미나': '웨비나' };
+  function slxView(name) { return slViews().filter(function (v) { return v.name === name; })[0] || null; }
+  function slxGrid(v) {
+    var R = v.cells.length, C = v.cl.length, txt = [], num = [], i, j;
+    for (i = 0; i < R; i++) { txt.push([]); num.push([]); for (j = 0; j < C; j++) { var t = slrTxt(v, i, j); txt[i].push(t); num[i].push(null); } }
+    if (v.nv) v.nv.forEach(function (x) { if (num[x[0]]) num[x[0]][x[1]] = x[2]; });
+    else for (i = 0; i < R; i++) for (j = 0; j < C; j++) { var t2 = txt[i][j]; if (t2 && /\d/.test(t2) && !/%|월|년/.test(t2)) { var n = slrNum(t2.replace(/억/g, '')); if (n != null) num[i][j] = n; } }
+    return { R: R, C: C, t: txt, n: num, exact: !!v.nv };
+  }
+  function slxLabel(g, i) {   // B·C·D 열 = 합계·구분·항목
+    for (var j = 1; j <= 3 && j < g.C; j++) { var t = g.t[i][j]; if (t && !/^[\d.,%()+\-\s억]+$/.test(t)) return { n: t, l: j === 1 ? 't' : j === 2 ? '1' : '2' }; }
+    return null;
+  }
+  function slxMonths(g, i) {   // i행에서 '1월'로 시작하는 12칸 묶음들의 시작 열
+    var out = [];
+    for (var j = 0; j < g.C; j++) if (g.t[i][j] === '1월' && g.t[i][j + 11] === '12월') { out.push(j); j += 11; }
+    return out;
+  }
+  function slxGroupName(g, i, j0) { for (var j = j0; j >= Math.max(0, j0 - 2); j--) if (g.t[i][j]) return g.t[i][j]; return ''; }
+  function slxArr(g, i, j0) { var a = []; for (var k = 0; k < 12; k++) { var x = g.n[i][j0 + k]; a.push(typeof x === 'number' ? x : 0); } return a; }
+  function slxParseSales(v) {
+    var g = slxGrid(v), secs = [], i;
+    for (i = 0; i < g.R; i++) if (g.t[i].some(function (t) { return /^✔/.test(t); })) secs.push(i);
+    if (secs.length < 2) throw new Error('(매출) 탭에서 「목표대비」·「전년동기대비」 표를 찾지 못했습니다.');
+    function sec(k) {
+      var h = secs[k], mrow = h + 1, ms = slxMonths(g, mrow);
+      if (ms.length < 2) throw new Error('(매출) 탭 월 머리글(1월~12월)을 찾지 못했습니다.');
+      var names = ms.map(function (j) { return slxGroupName(g, h, j); }), end = secs[k + 1] || g.R, rows = [];
+      for (var r = mrow + 1; r < end; r++) {
+        var lb = slxLabel(g, r); if (!lb) continue;
+        rows.push({ n: SLX_REN[lb.n] || lb.n, l: lb.l, a: slxArr(g, r, ms[0]), b: slxArr(g, r, ms[1]) });
+      }
+      return { names: names, rows: rows };
+    }
+    var s1 = sec(0), s2 = sec(1), yr = function (t) { var m = /(\d{4})년/.exec(t || ''); return m ? m[1] : ''; };
+    var y = yr(s1.names[0]) || slNow().slice(0, 4), yp = yr(s2.names[1]) || String(+y - 1);
+    var T1 = s1.rows.map(function (o) { return { n: o.n, l: o.l, mo: o.a, mt: o.b }; });
+    var T2 = s2.rows.filter(function (o) { return o.l !== '2' || o.a.concat(o.b).some(function (x) { return Math.abs(x) > 1e-9; }); })
+      .map(function (o) { return { n: o.n, l: o.l, mo: o.a, mp12: o.b }; });
+    if (!T1.length || T1[0].l !== 't') throw new Error('(매출) 탭 목표대비 표의 합계 행을 찾지 못했습니다.');
+    return { y: y, yp: yp, T1: T1, T2: T2, exact: g.exact };
+  }
+  function slxParsePL(v) {
+    var g = slxGrid(v), mrow = -1, ms = [], i;
+    for (i = 0; i < g.R && mrow < 0; i++) { var m = slxMonths(g, i); if (m.length >= 2) { mrow = i; ms = m; } }
+    if (mrow < 0) throw new Error('(손익) 탭 월 머리글(1월~12월)을 찾지 못했습니다.');
+    var yr = function (t) { var x = /(\d{4})/.exec(t || ''); return x ? x[1] : ''; };
+    var y = yr(slxGroupName(g, mrow - 1, ms[0])) || slNow().slice(0, 4), yp = yr(slxGroupName(g, mrow - 1, ms[1])) || String(+y - 1);
+    var rows = [], started = false;
+    for (var r = mrow + 1; r < g.R; r++) {
+      var empty = !g.t[r].some(function (t) { return t; });
+      if (empty) { if (started) break; continue; }
+      var lb = slxLabel(g, r); if (!lb) continue;
+      started = true; rows.push({ n: lb.n, l: lb.l, m: slxArr(g, r, ms[0]), p: slxArr(g, r, ms[1]) });
+    }
+    var sales = rows.filter(function (o) { return o.n === '매출액'; })[0] || rows[0];
+    if (!sales) throw new Error('(손익) 탭에서 손익 표를 찾지 못했습니다.');
+    var done = 0; sales.m.forEach(function (x, k) { if (Math.abs(x) > 1e-9) done = k + 1; });
+    var tgt = 0.2, all = g.t.map(function (r) { return r.join(' '); }).join(' '), tm = /영업이익률\s*목표[^\d]{0,8}(\d+(?:\.\d+)?)\s*%/.exec(all);
+    if (tm) tgt = +tm[1] / 100;
+    return { y: y, yp: yp, rows: rows, done: done, tgt: tgt };
+  }
+  // 차트 주석: 월별 큰 항목(1억 이상) — 외부 컨퍼런스빌은 확정 월에 고객사 단위로
+  function slxAnn(T2, done, y) {
+    var out = { 내부: {}, 외부: {} }, G = '', items = { 내부: [], 외부: [] };
+    T2.forEach(function (o) { if (o.l === '1') G = o.n; else if (o.l === 't') G = ''; else if (items[G]) items[G].push(o); });
+    var raw = SL.data && SL.data.years && SL.data.years[y] ? SL.data.years[y].rows : [];
+    for (var i = 0; i < 12; i++) ['내부', '외부'].forEach(function (io) {
+      var L = [];
+      items[io].forEach(function (o) {
+        var v = o.mo[i]; if (!(v >= 0.995)) return;
+        if (io === '외부' && o.n === '컨퍼런스빌' && i < done) {
+          var by = {}; raw.forEach(function (r) { if (!r.fc && r.io === '외부' && r.cat === '컨퍼런스빌' && r.m[i]) by[r.c] = (by[r.c] || 0) + r.m[i] / 1e8; });
+          var cs = Object.keys(by).filter(function (c) { return by[c] >= 0.995; });
+          if (cs.length) { cs.forEach(function (c) { L.push([slxShort(c), by[c]]); }); return; }
+        }
+        L.push([o.n, v]);
+      });
+      L.sort(function (a, b) { return b[1] - a[1]; });
+      if (L.length) out[io][i] = L.slice(0, 3);
+    });
+    return out;
+  }
+  function slxShort(c) { return String(c || '').replace(/\((사|주|재|유)\)|㈜|주식회사|사단법인|재단법인|유한회사/g, '').replace(/\s+/g, ' ').trim() || String(c); }
+  var slxF1 = function (v) { return v.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); };
+  var slxF0 = function (v) { return Math.round(v).toLocaleString('ko-KR'); };
+  var slxPc0 = function (v) { return isFinite(v) ? Math.round(v * 100) + '%' : '–'; };
+  var slxSg0 = function (v) { return Math.round(Math.abs(v)) === 0 ? '±0' : (v >= 0 ? '+' : '−') + slxF0(Math.abs(v)); };
+  var slxSg1 = function (v) { return (Math.abs(v) < 0.05 ? '±' : (v > 0 ? '+' : '−')) + slxF1(Math.abs(v)); };
+  var slxSum = function (a, n) { return a.slice(0, n == null ? a.length : n + 1).reduce(function (x, y) { return x + y; }, 0); };
+  var slxYY = function (y) { return String(y).slice(2); };
+  function slxKG(el, titles, rows, em) {
+    var o = '<div class="rl0" style="--c:1;--r:1"></div>' + rows.map(function (r, i) { return '<div class="rl" style="--c:1;--r:' + (i + 2) + '"><b>' + r.l + '</b>' + (r.s ? '<i>' + r.s + '</i>' : '') + '</div>'; }).join('');
+    titles.forEach(function (t, c) {
+      var e = c === em ? ' em' : '';
+      o += '<div class="ct' + e + '" style="--c:' + (c + 2) + ';--r:1"><span>' + t + '</span>' + (c === em ? '<em>핵심 지표</em>' : '') + '</div>';
+      rows.forEach(function (r, i) {
+        var x = r.cells[c];
+        o += '<div class="cell' + e + '" style="--c:' + (c + 2) + ';--r:' + (i + 2) + '"><div class="mlab">' + r.l + '</div><div class="vr"><div class="sc-v">' + x.v + '<small>' + (x.u || '') + '</small></div>' +
+          (x.sh ? '<div class="share"><span>비중</span><b>' + x.sh + '</b></div>' : '') + '</div>' + (x.d || []).map(function (t) { return '<div class="sc-d">' + t + '</div>'; }).join('') + '</div>';
+      });
+    });
+    el.innerHTML = o;
+  }
+  function slxSub(m, done) {
+    if (m <= done) return '1~' + m + '월 확정';
+    return (done ? '1~' + done + '월 확정 + ' : '') + (m === done + 1 ? m + '월' : (done + 1) + '~' + m + '월') + ' 예측';
+  }
+  // ---- [매출] 탭 -----------------------------------------------------------
+  function renderSlxSales(box, S, done) {
+    var T1 = S.T1, T2 = S.T2, y = slxYY(S.y), yp = slxYY(S.yp), MN = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    var t1 = function (n) { return n === '전체' ? T1[0] : T1.filter(function (o) { return o.l === '1' && o.n === n; })[0]; };
+    var t2 = function (n) { return n === '전체' ? T2[0] : T2.filter(function (o) { return o.l === '1' && o.n === n; })[0]; };
+    var N = ['전체', '내부', '외부'].filter(function (n) { return t1(n) && t2(n); });
+    var Z = function () { return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; };
+    var IN = (t1('내부') || {}).mo || Z(), EX = (t1('외부') || {}).mo || Z();
+    var I0 = Math.min(Math.max(done, 0), 11);
+    if (SLX.mon == null || SLX.mon > 11) SLX.mon = I0;
+    var fcFrom = done;   // 이 월(0부터)부터 예측
+    var LN = function (a, x, yv) { return a + ' <b>' + slxPc0(x / yv) + '</b> (' + slxSg0(x - yv) + '억)'; };
+    // 요약 3줄 (기본 월 기준)
+    var I = I0, m = I + 1, tot = t1('전체'), tp = t2('전체'), cum = slxSum(tot.mo, I), cumT = slxSum(tot.mt, I), cumP = slxSum(tp.mp12, I);
+    var inR = t1('내부'), exR = t1('외부'), inP = t2('내부'), exP = t2('외부');
+    var ci = inR ? slxSum(inR.mo, I) : 0, ce = exR ? slxSum(exR.mo, I) : 0, cit = inR ? slxSum(inR.mt, I) : 0, cet = exR ? slxSum(exR.mt, I) : 0;
+    var pe = exP ? slxSum(exP.mp12, I) : 0, exSh = cum ? ce / cum : 0, exShP = cumP ? pe / cumP : 0, exShT = cumT ? cet / cumT : 0;
+    var fyE = exR ? slxSum(exR.mo) : 0, fy = slxSum(tot.mo), g1 = cumP ? cum / cumP - 1 : 0, a1 = cumT ? cum / cumT : 0;
+    var inPct = Math.round(exSh * 100) >= 0 ? 100 - Math.round(exSh * 100) : 0, tIn = 100 - Math.round(exShT * 100);
+    var sum3 = '<ul class="sum3 w">' +
+      '<li><i class="n">1</i><b class="' + (g1 >= 0 ? 'up' : 'dn') + '">전년 대비 ' + (g1 >= 0 ? '+' : '−') + Math.abs(Math.round(g1 * 100)) + '%</b><span>' + y + '년 1~' + m + '월 누계 <em>' + slxF1(cum) + '억</em>(' + slxSub(m, done) + '), 전년 동기 ' + slxF1(cumP) + '억 대비 <em>' + slxSg1(cum - cumP) + '억</em> ' + (cum >= cumP ? '성장' : '감소') + '</span></li>' +
+      '<li><i class="n">2</i><b class="' + (a1 >= 1 ? 'up' : 'dn') + '">목표 ' + slxPc0(a1) + ' 달성</b><span>누계 목표 ' + slxF1(cumT) + '억 대비 <em>' + slxSg1(cum - cumT) + '억</em> ' + (cum >= cumT ? '초과' : '미달') +
+      (inR && exR ? ' — 내부 ' + slxPc0(ci / cit) + '(' + slxSg1(ci - cit) + '억), 외부 ' + slxPc0(ce / cet) + '(' + slxSg1(ce - cet) + '억)' : '') + '</span></li>' +
+      (inR && exR ? '<li><i class="n">3</i><b class="' + (exSh >= exShT - 0.005 ? 'up' : 'dn') + '">내부 ' + inPct + ' : 외부 ' + (100 - inPct) + '</b><span>내부 <em>' + slxF1(ci) + '억</em>(' + slxPc0(1 - exSh) + ') · 외부 <em>' + slxF1(ce) + '억</em>(' + slxPc0(exSh) + ') — 외부 비중은 전년 ' + slxPc0(exShP) + ' 대비 ' +
+        (exSh >= exShP ? '+' : '−') + Math.abs(Math.round((exSh - exShP) * 100)) + '%p ' + (exSh >= exShP ? '확대' : '축소') + (exSh >= exShT - 0.005 ? ', <em>목표 비중(' + tIn + ':' + (100 - tIn) + ') 달성</em>' : '됐으나 <em>목표 비중(' + tIn + ':' + (100 - tIn) + ') 미달</em>') +
+        (fy ? ', 연간 예측도 외부 ' + slxPc0(fyE / fy) : '') + '</span></li>' : '') + '</ul>';
+    box.innerHTML = sum3 + '<div class="kg" id="slxKpis" style="--cols:' + N.length + '"></div>' +
+      '<section class="card chartcard"><div class="legend" style="justify-content:flex-end;gap:6px 18px"><span><i style="width:18px;height:3px;border-radius:2px;background:var(--in);vertical-align:3px"></i>내부</span><span><i style="width:18px;height:3px;border-radius:2px;background:var(--ex);vertical-align:3px"></i>외부</span>' + (done < 12 ? '<span style="color:var(--mute)">점선·흰 점 = 예측</span>' : '') + '</div>' +
+      '<p class="chart-hint">월을 누르면 위 KPI와 아래 표의 누계·당월이 해당 월 기준으로 바뀝니다</p><div class="scroll"><div id="slxChart" style="min-width:560px"></div></div></section>' +
+      '<section class="card pt st' + (SLX.open1 ? ' onx' : '') + '" id="slxT1sec"><div class="sthead"><h2>1. 목표 대비</h2><div class="ptools"><button type="button" id="slxB1" aria-expanded="' + SLX.open1 + '"><span class="pm">' + (SLX.open1 ? '−' : '+') + '</span> ' + y + '년 월별 실적·목표</button></div></div><div class="scroll"><table id="slxT1"></table></div></section>' +
+      '<section class="card pt st' + (SLX.open2 ? ' onx' : '') + '" id="slxT2sec"><div class="sthead"><h2>2. 전년 대비</h2><div class="ptools"><button type="button" id="slxB2" aria-expanded="' + SLX.open2 + '"><span class="pm">' + (SLX.open2 ? '−' : '+') + '</span> ' + y + '년·' + yp + '년 월별 매출</button></div></div><div class="scroll"><table id="slxT2"></table></div></section>';
+    // 차트
+    var ann = slxAnn(T2, done, S.y);
+    (function () {
+      var W = 1100, H = 440, L = 40, R = 62, Tp = 66, B = 30, pw = W - L - R, ph = H - Tp - B;
+      var mx = Math.max.apply(null, IN.concat(EX).concat([1])), max = Math.ceil(mx * 1.08 / 2) * 2;
+      var yy = function (v) { return Tp + ph - (v / max) * ph; }, step = pw / 11, X = function (i) { return L + i * step; };
+      var tang = function (a) {
+        var n = a.length, d = [], mm = [], i; for (i = 0; i < n - 1; i++) d.push(a[i + 1] - a[i]); mm[0] = d[0]; mm[n - 1] = d[n - 2];
+        for (i = 1; i < n - 1; i++) mm[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+        for (i = 0; i < n - 1; i++) { if (d[i] === 0) { mm[i] = mm[i + 1] = 0; } else { var a1 = mm[i] / d[i], b1 = mm[i + 1] / d[i], s = a1 * a1 + b1 * b1; if (s > 9) { var t = 3 / Math.sqrt(s); mm[i] = t * a1 * d[i]; mm[i + 1] = t * b1 * d[i]; } } }
+        return mm;
+      };
+      var seg = function (a, mm, i) { var x0 = X(i), x1 = X(i + 1), dx = (x1 - x0) / 3; return 'C' + (x0 + dx) + ',' + yy(a[i] + mm[i] / 3) + ' ' + (x1 - dx) + ',' + yy(a[i + 1] - mm[i + 1] / 3) + ' ' + x1 + ',' + yy(a[i + 1]); };
+      var path = function (a, mm, f, t) { var d = 'M' + X(f) + ',' + yy(a[f]); for (var i = f; i < t; i++) d += seg(a, mm, i); return d; };
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="월별 내부·외부 매출 추이"><defs>';
+      var SS = [{ n: 'in', a: IN, c: 'var(--in)', io: '내부' }, { n: 'ex', a: EX, c: 'var(--ex)', io: '외부' }];
+      SS.forEach(function (o) { s += '<linearGradient id="slxg_' + o.n + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:' + o.c + ';stop-opacity:.30"/><stop offset="1" style="stop-color:' + o.c + ';stop-opacity:0"/></linearGradient>'; });
+      s += '</defs><rect class="selband" x="' + (X(SLX.mon) - step / 2) + '" y="' + (Tp - 34) + '" width="' + step + '" height="' + (ph + 34 + B - 4) + '" rx="6"/>';
+      s += '<line x1="' + (L - 10) + '" x2="' + (W - R + 10) + '" y1="' + yy(0) + '" y2="' + yy(0) + '" stroke="var(--line)"/>';
+      var cut = Math.max(0, Math.min(11, fcFrom - 1));
+      SS.forEach(function (o) {
+        var mm = tang(o.a), base = yy(0);
+        s += '<path d="' + path(o.a, mm, 0, 11) + ' L' + X(11) + ',' + base + ' L' + X(0) + ',' + base + ' Z" fill="url(#slxg_' + o.n + ')"/>';
+        if (cut > 0) s += '<path d="' + path(o.a, mm, 0, fcFrom >= 12 ? 11 : cut) + '" fill="none" stroke="' + o.c + '" stroke-width="2" stroke-linecap="round"/>';
+        if (fcFrom < 12) s += '<path d="' + path(o.a, mm, cut, 11) + '" fill="none" stroke="' + o.c + '" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>';
+      });
+      for (var i = 0; i < 12; i++) {
+        var hiIn = IN[i] >= EX[i];
+        SS.forEach(function (o) {
+          var v = o.a[i], fc = i >= fcFrom, top = (o.n === 'in') === hiIn, A = ann[o.io][i];
+          s += '<circle cx="' + X(i) + '" cy="' + yy(v) + '" r="' + (fc ? 4 : 3.6) + '" fill="' + (fc ? 'var(--card)' : o.c) + '" stroke="' + o.c + '" stroke-width="1.8"/>';
+          if (A) { var below = !(top || yy(v) + 18 > yy(0) - 2); A.forEach(function (a, k) { var y2 = below ? yy(v) + 34 + k * 14 : (yy(v) - 26 - (A.length - 1 - k) * 14); s += '<text x="' + X(i) + '" y="' + y2 + '" text-anchor="middle" font-size="9.5" fill="' + (o.n === 'ex' ? 'var(--up)' : 'var(--in)') + '" font-weight="600">' + esc(a[0]) + ' ' + slxF1(a[1]) + '억</text>'; }); }
+          s += '<text x="' + X(i) + '" y="' + ((top || yy(v) + 18 > yy(0) - 2) ? yy(v) - 10 : yy(v) + 18) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + o.c + '">' + slxF1(v) + '</text>';
+        });
+        s += '<text x="' + X(i) + '" y="' + (H - 9) + '" text-anchor="middle" font-size="12" fill="var(--muted)">' + MN[i] + '</text>';
+      }
+      for (i = 0; i < 12; i++) s += '<rect class="hit" data-m="' + i + '" tabindex="0" role="button" aria-label="' + MN[i] + ' 누계·당월 보기" x="' + (X(i) - step / 2) + '" y="' + (Tp - 34) + '" width="' + step + '" height="' + (ph + 34 + B - 4) + '" rx="6"/>';
+      $('#slxChart').innerHTML = s + '</svg>';
+    })();
+    // 표 공통
+    var sgn = function (v) { return (v >= 0.05 ? '+' : (v <= -0.05 ? '−' : '±')) + slxF1(Math.abs(v)); };
+    var pc = function (v) { return isFinite(v) ? Math.round(v * 100) + '%' : '–'; };
+    var gt = function (a, b) { if (!(b > 0)) return '–'; var r = Math.round((a / b - 1) * 100); if (Math.abs(r) >= 1000) return '–'; return (r === 0 ? '±' : (r > 0 ? '+' : '−')) + Math.abs(r) + '%'; };
+    var dc = function (v) { return v >= 0.05 ? 'pos' : (v <= -0.05 ? 'neg' : ''); };
+    var mh = function (extra, fc) { return MN.map(function (mn, i) { var f = fc && i >= fcFrom; return '<th class="' + extra + (f ? ' fc' : '') + '">' + mn + (f ? '<small>예측</small>' : '') + '</th>'; }).join(''); };
+    var lab = function (o, hot) { return hot ? '<span class="chip">' + esc(o.n) + '</span>' : '<span>' + esc(o.n) + '</span>'; };
+    var GG = '', rc = function (o) { if (o.l === '1') GG = o.n; else if (o.l === 't') GG = ''; return o.l + (GG === '외부' ? ' gx' : (GG === '내부' ? ' gi' : '')); };
+    var shc = function (o, v) { return o.l === '2' ? '<td class="sh"></td>' : o.l === 't' ? '<td class="sh">(' + pc(v) + ')</td>' : '<td class="sh key ' + (o.n === '내부' ? '' : 'exg') + '">' + pc(v) + '</td>'; };
+    var cells = function (a, cls, fc) { return a.map(function (x, i) { return '<td class="' + cls + (fc && i >= fcFrom ? ' fc' : '') + '">' + (x ? slxF1(x) : '–') + '</td>'; }).join(''); };
+    var dcell = function (txt, v) { return '<td class="d ' + dc(v) + '">' + txt + '</td>'; };
+    var acc = function (x) { if (!isFinite(x)) return '<td class="d">–</td>'; return x < 0.8 ? '<td class="d neg"><span class="chip">' + pc(x) + '</span></td>' : '<td class="d ' + (x < 0.995 ? 'neg' : (x < 1.005 ? '' : 'pos')) + '">' + pc(x) + '</td>'; };
+    var fyLab = done >= 12 ? '실적' : '예측', fyHead = y + '년 전체' + (done >= 12 ? '' : ' 예측');
+    function bt1(I) {
+      var m1 = I + 1, SM = function (a) { return slxSum(a, I); }, totFy = slxSum(T1[0].mo), ctot = SM(T1[0].mo); GG = '';
+      var t = '<thead><tr class="g1"><th rowspan="2" class="lb"></th><th colspan="5" class="gh">' + fyHead + '</th><th colspan="5" class="gh gd">' + y + '년 ' + m1 + '월 누계</th><th colspan="4" class="gh">' + y + '년 ' + m1 + '월 당월</th><th class="gap mx" rowspan="2"></th><th colspan="12" class="gh gm mx">' + y + '년 월별 실적</th><th class="gap mx" rowspan="2"></th><th colspan="12" class="gh gm mx">' + y + '년 월별 목표</th></tr>';
+      t += '<tr class="g2"><th>' + fyLab + '</th><th class="sh">비중</th><th class="ref">목표</th><th>달성률</th><th>GAP</th><th>실적</th><th class="sh">비중</th><th class="ref">목표</th><th>달성률</th><th>GAP</th><th>실적</th><th class="ref">목표</th><th>달성률</th><th>GAP</th>' + mh('mx', true) + mh('mx', false) + '</tr></thead><tbody>';
+      T1.forEach(function (o) {
+        var fy = slxSum(o.mo), fyt = slxSum(o.mt), cl = rc(o), cc = SM(o.mo), ct = SM(o.mt), mm = o.mo[I], mt = o.mt[I];
+        t += '<tr class="r' + cl + '"><td class="lb">' + lab(o, o.l === '2' && fyt > 0 && fy / fyt < 0.8) + '</td><td>' + slxF1(fy) + '</td>' + shc(o, fy / totFy) + '<td class="ref">' + slxF0(fyt) + '</td>' + acc(fy / fyt) + dcell(sgn(fy - fyt), fy - fyt);
+        t += '<td>' + slxF1(cc) + '</td>' + shc(o, cc / ctot) + '<td class="ref">' + slxF0(ct) + '</td>' + acc(cc / ct) + dcell(sgn(cc - ct), cc - ct);
+        t += '<td>' + slxF1(mm) + '</td><td class="ref">' + slxF0(mt) + '</td>' + acc(mm / mt) + dcell(sgn(mm - mt), mm - mt) + '<td class="gap mx"></td>';
+        t += cells(o.mo, 'mx', true) + '<td class="gap mx"></td>' + o.mt.map(function (x) { return '<td class="mx ref">' + (x ? slxF0(x) : '–') + '</td>'; }).join('') + '</tr>';
+      });
+      $('#slxT1').innerHTML = t + '</tbody>';
+    }
+    function bt2(I) {
+      var m1 = I + 1, SM = function (a) { return slxSum(a, I); }; GG = '';
+      var tt = T2[0], totFy = slxSum(tt.mo), totFy25 = slxSum(tt.mp12), ctot = SM(tt.mo), ptot = SM(tt.mp12);
+      var s25 = function (o, v) { return o.l === '2' ? '<td class="ref sh"></td>' : o.l === 't' ? '<td class="ref sh">(' + pc(v) + ')</td>' : '<td class="ref sh key ' + (o.n === '내부' ? '' : 'exg') + '" style="font-weight:600">' + pc(v) + '</td>'; };
+      var t = '<thead><tr class="g1"><th rowspan="2" class="lb"></th><th colspan="6" class="gh">' + fyHead + '</th><th colspan="6" class="gh gd">' + y + '년 ' + m1 + '월 누계</th><th colspan="4" class="gh">' + y + '년 ' + m1 + '월 당월</th><th class="gap mx" rowspan="2"></th><th colspan="12" class="gh gm mx">' + y + '년 월별 매출</th><th class="gap mx" rowspan="2"></th><th colspan="12" class="gh gm mx">' + yp + '년 월별 매출</th></tr>';
+      t += '<tr class="g2"><th>' + y + '년</th><th class="sh">비중</th><th class="ref">' + yp + '년</th><th class="sh ref">비중</th><th>증감액</th><th>성장률</th><th>' + y + '년</th><th class="sh">비중</th><th class="ref">' + yp + '년</th><th class="sh ref">비중</th><th>증감액</th><th>성장률</th><th>' + y + '년</th><th class="ref">' + yp + '년</th><th>증감액</th><th>성장률</th>' + mh('mx', true) + mh('mx', false) + '</tr></thead><tbody>';
+      T2.forEach(function (o) {
+        var fy = slxSum(o.mo), fy5 = slxSum(o.mp12), df = fy - fy5, cc = SM(o.mo), pp = SM(o.mp12), mm = o.mo[I], mp = o.mp12[I], d = cc - pp, dm = mm - mp, cl = rc(o);
+        t += '<tr class="r' + cl + '"><td class="lb">' + lab(o, df <= -0.05) + '</td><td>' + slxF1(fy) + '</td>' + shc(o, fy / totFy) + '<td class="ref">' + slxF1(fy5) + '</td>' + s25(o, fy5 / totFy25) + dcell(sgn(df), df) + dcell(gt(fy, fy5), df);
+        t += '<td>' + slxF1(cc) + '</td>' + shc(o, cc / ctot) + '<td class="ref">' + slxF1(pp) + '</td>' + s25(o, pp / ptot) + dcell(sgn(d), d) + dcell(gt(cc, pp), d);
+        t += '<td>' + slxF1(mm) + '</td><td class="ref">' + slxF1(mp) + '</td>' + dcell(sgn(dm), dm) + dcell(gt(mm, mp), dm) + '<td class="gap mx"></td>';
+        t += cells(o.mo, 'mx', true) + '<td class="gap mx"></td>' + cells(o.mp12, 'mx ref', false) + '</tr>';
+      });
+      $('#slxT2').innerHTML = t + '</tbody>';
+    }
+    function lockW(tid) {   // 월별 열을 펼칠 때 앞쪽 열 너비 고정
+      var t = $('#' + tid);
+      [].slice.call(t.querySelectorAll('tr.g1 th.lb, tr.g1 th.gh:not(.mx), tr.g2 th:not(.mx)')).forEach(function (x) { var w = Math.round(x.getBoundingClientRect().width); if (x.colSpan === 1 && w) { x.style.minWidth = w + 'px'; x.style.width = w + 'px'; } });
+      t.querySelectorAll('tr.g2 th.mx').forEach(function (x) { x.style.minWidth = '62px'; x.style.width = '62px'; });
+      t.querySelectorAll('tr.g1 th.gap.mx').forEach(function (g) { g.style.minWidth = '18px'; g.style.width = '18px'; });
+    }
+    function kpis(I) {
+      var mI = I + 1, rows = N.map(function (n) { var a = t1(n), b = t2(n); return [n, slxSum(a.mo, I), slxSum(a.mt, I), slxSum(b.mp12, I), slxSum(a.mo), slxSum(a.mt), slxSum(b.mp12)]; });
+      slxKG($('#slxKpis'), N, [
+        { l: y + '년 <span class="yb">' + mI + '월 누계</span>', s: slxSub(mI, done), cells: rows.map(function (r, k) { return { v: slxF0(r[1]), u: '억', sh: k ? slxPc0(r[1] / rows[0][1]) : '', d: [LN('목표 달성', r[1], r[2]), LN('전년 대비', r[1], r[3])] }; }) },
+        { l: y + '년 <span class="yb">전체</span>', s: done >= 12 ? '1~12월 확정' : slxSub(12, done), cells: rows.map(function (r, k) { return { v: slxF0(r[4]), u: '억', sh: k ? slxPc0(r[4] / rows[0][4]) : '', d: [LN('목표 달성', r[4], r[5]), LN('전년 대비', r[4], r[6])] }; }) }
+      ]);
+      $('#slxKpis').querySelectorAll('[style*="--c:4"]').forEach(function (e) { e.classList.add('exk'); });
+      $('#slxKpis').querySelectorAll('[style*="--c:2"]').forEach(function (e) { e.classList.add('allk'); });
+    }
+    function setMon(I) {
+      SLX.mon = I; kpis(I); bt1(I); bt2(I);
+      var sb = box.querySelector('.selband'), st = (1100 - 40 - 62) / 11; if (sb) sb.setAttribute('x', 40 + I * st - st / 2);
+      if (SLX.open1) lockW('slxT1'); if (SLX.open2) lockW('slxT2');
+    }
+    setMon(SLX.mon);
+    var ch = $('#slxChart');
+    ch.addEventListener('click', function (e) { var h = e.target.closest('.hit'); if (h) setMon(+h.dataset.m); });
+    ch.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { var h = e.target.closest('.hit'); if (h) { e.preventDefault(); setMon(+h.dataset.m); } } });
+    [['slxB1', 'slxT1sec', 'slxT1', 'open1', y + '년 월별 실적·목표'], ['slxB2', 'slxT2sec', 'slxT2', 'open2', y + '년·' + yp + '년 월별 매출']].forEach(function (x) {
+      $('#' + x[0]).onclick = function () {
+        var sec = $('#' + x[1]); if (!SLX[x[3]]) lockW(x[2]);
+        SLX[x[3]] = sec.classList.toggle('onx'); this.setAttribute('aria-expanded', SLX[x[3]]); this.innerHTML = '<span class="pm">' + (SLX[x[3]] ? '−' : '+') + '</span> ' + x[4];
+      };
+    });
+  }
+  // ---- [손익] 탭 -----------------------------------------------------------
+  function renderSlxPL(box, P) {
+    var y = slxYY(P.y), yp = slxYY(P.yp), d = P.done || 12, M = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    var row = function (n) { return P.rows.filter(function (o) { return o.n === n; })[0]; };
+    var cum = function (o) { return [slxSum(o.m, d - 1), slxSum(o.p, d - 1)]; };
+    var sales = row('매출액') || P.rows[0], op = row('영업이익'), sga = row('판매관리비'), mk = row('마케팅비');
+    var S = cum(sales), OP = op ? cum(op) : null, MK = mk ? cum(mk) : null, SG = sga ? cum(sga) : null, tgt = P.tgt;
+    var per = y + '년 1~' + d + '월';
+    // 요약 3줄
+    var dS = S[0] - S[1], gS = S[1] ? S[0] / S[1] - 1 : 0, sum = '<ul class="sum3">';
+    var opWorse = OP && S[1] && OP[1] && (OP[0] / OP[1] - 1) < gS;
+    sum += '<li><i class="n">1</i><b class="' + (dS >= 0 ? 'up' : 'dn') + '">매출 ' + (gS >= 0 ? '+' : '−') + Math.abs(Math.round(gS * 100)) + '%</b><span>' + per + ' 매출 <em>' + slxF1(S[0]) + '억</em>, 전년 동기 대비 ' + slxSg1(dS) + '억 ' + (dS >= 0 ? '성장' : '감소') + (opWorse ? '했으나' : '') + '</span></li>';
+    if (SG) {
+      var dG = SG[0] - SG[1], gG = SG[1] ? SG[0] / SG[1] - 1 : 0, kids = [], on = false;
+      P.rows.forEach(function (o) { if (o === sga) on = true; else if (o.l !== '2') on = false; else if (on) kids.push(o); });
+      var inc = kids.map(function (o) { var c = cum(o); return [o.n, c[0] - c[1]]; }).filter(function (x) { return x[1] > 0.05; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 2);
+      var incSum = inc.reduce(function (a, x) { return a + x[1]; }, 0);
+      sum += '<li><i class="n">2</i><b class="' + (gG > gS ? 'dn' : 'up') + '">비용 ' + (gG >= 0 ? '+' : '−') + Math.abs(Math.round(gG * 100)) + '%</b><span>판매관리비가 ' + slxSg1(dG) + '억 ' + (dG >= 0 ? '늘어' : '줄어') +
+        (dG > dS ? ' 매출 증가분(' + slxSg1(dS) + '억)을 상회' : ' 매출 증가분(' + slxSg1(dS) + '억) 이내') +
+        (inc.length && dG > 0 ? ', 이 중 <em>' + inc.map(function (x) { return esc(x[0]) + ' ' + slxSg1(x[1]) + '억'; }).join(' · ') + '</em>이 증가분의 ' + slxPc0(incSum / dG) : '') + '</span></li>';
+    }
+    if (OP) {
+      var mg = S[0] ? OP[0] / S[0] : 0, mgP = S[1] ? OP[1] / S[1] : 0, dO = OP[0] - OP[1];
+      sum += '<li><i class="n">3</i><b class="' + (mg >= tgt ? 'up' : 'dn') + '">이익률 ' + slxPc0(mg) + '</b><span>영업이익 <em>' + slxF1(OP[0]) + '억</em>(전년 대비 ' + slxSg1(dO) + '억, ' + (OP[1] ? (dO >= 0 ? '+' : '−') + Math.abs(Math.round((OP[0] / OP[1] - 1) * 100)) + '%' : '–') + '), 영업이익률은 전년 ' + slxPc0(mgP) + ' 대비 ' + (mg >= mgP ? '+' : '−') + Math.abs(Math.round((mg - mgP) * 100)) + '%p · 목표 ' + slxPc0(tgt) + ' 대비 ' + (mg >= tgt ? '+' : '−') + Math.abs(Math.round((mg - tgt) * 100)) + '%p</span></li>';
+    }
+    sum += '</ul>';
+    var KT = ['매출액'], C1 = [{ v: slxF0(S[0]), u: '억', d: ['전년 대비 <b>' + slxPc0(S[0] / S[1]) + '</b> (' + slxSg0(S[0] - S[1]) + '억)'] }], C2 = [{ v: slxF0(S[1]), u: '억', d: [yp + '년 연간 <b>' + slxF0(slxSum(sales.p)) + '억</b>'] }];
+    if (OP) {
+      KT.push('영업이익', '영업이익률');
+      var mg2 = OP[0] / S[0], mgP2 = OP[1] / S[1];
+      C1.push({ v: slxF0(OP[0]), u: '억', d: ['전년 대비 <b>' + slxPc0(OP[0] / OP[1]) + '</b> (' + slxSg0(OP[0] - OP[1]) + '억)'] },
+        { v: slxPc0(mg2), d: ['목표 ' + slxPc0(tgt) + ' 대비 <b class="' + (mg2 < tgt ? 'ng' : '') + '">' + (mg2 >= tgt ? '+' : '') + Math.round((mg2 - tgt) * 100) + '%p</b>', '전년 대비 <b class="' + (mg2 < mgP2 ? 'ng' : '') + '">' + (mg2 >= mgP2 ? '+' : '') + Math.round((mg2 - mgP2) * 100) + '%p</b>'] });
+      C2.push({ v: slxF0(OP[1]), u: '억', d: ['영업이익률 <b>' + slxPc0(mgP2) + '</b>'] }, { v: slxPc0(mgP2), d: ['영업이익 ' + slxF0(OP[1]) + '억 / 매출 ' + slxF0(S[1]) + '억'] });
+    }
+    if (MK) {
+      KT.push('마케팅비');
+      C1.push({ v: slxF0(MK[0]), u: '억', d: ['전년 대비 <b>' + slxPc0(MK[0] / MK[1]) + '</b> (' + slxSg0(MK[0] - MK[1]) + '억)', '매출 대비 <b>' + slxPc0(MK[0] / S[0]) + '</b>'] });
+      C2.push({ v: slxF0(MK[1]), u: '억', d: ['매출 대비 <b>' + slxPc0(MK[1] / S[1]) + '</b>'] });
+    }
+    box.innerHTML = sum + '<div class="kg" id="slxPlKpis" style="--cols:' + KT.length + '"></div>' +
+      '<section class="card pt' + (SLX.open25 ? ' on25' : '') + '"><div class="ptools"><button type="button" id="slxB25" aria-expanded="' + SLX.open25 + '"><span class="pm">' + (SLX.open25 ? '−' : '+') + '</span> ' + yp + '년 월별 손익</button></div><div class="scroll"><table id="slxPl"></table></div></section>';
+    slxKG($('#slxPlKpis'), KT, [{ l: '<i class="yc">' + y + '년</i> 1~' + d + '월', s: d >= 12 ? '연간 확정' : '확정', cells: C1 }, { l: '<i class="yc">' + yp + '년</i> 1~' + d + '월', s: '전년', cells: C2 }], KT.indexOf('영업이익률') >= 0 ? KT.indexOf('영업이익률') : undefined);
+    var sgn = function (v) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1); };
+    var gtxt = function (a, b) { return b > 0 ? ((a / b - 1) >= 0 ? '+' : '−') + Math.abs(Math.round((a / b - 1) * 100)) + '%' : '–'; };
+    var cl = function (v) { return v >= 0.05 ? 'pos' : (v < 0 ? 'neg' : ''); };
+    var pct = function (a, b) { return b ? Math.round(a / b * 100) + '%' : '–'; };
+    var bc = cum(sales);
+    var t = '<thead><tr class="g1"><th rowspan="2" class="lb"></th><th colspan="2" class="gh">' + y + '년 누계</th><th colspan="2" class="gh">' + yp + '년 누계</th><th colspan="2" class="gh gd">전년동기대비</th><th class="gap" rowspan="2"></th><th colspan="' + d + '" class="gh gm">' + y + '년 월별 손익</th><th class="gap m25" rowspan="2"></th><th colspan="12" class="gh gm m25">' + yp + '년 월별 손익</th></tr>';
+    t += '<tr class="g2"><th>금액</th><th class="sh">비중</th><th>금액</th><th class="sh">비중</th><th>증감액</th><th>성장률</th>' + M.slice(0, d).map(function (m) { return '<th>' + m + '</th>'; }).join('') + M.map(function (m) { return '<th class="m25">' + m + '</th>'; }).join('') + '</tr></thead><tbody>';
+    P.rows.forEach(function (o) {
+      var lv = o.l, c = cum(o), key = /이익/.test(o.n) && lv === 't', df = c[0] - c[1];
+      var hot = lv === '2' && c[1] > 0 && c[0] / c[1] - 1 >= 0.5 && df >= 1;
+      var sc = function (x, b, first) { return lv === '2' ? '<td class="sh"></td>' : key ? '<td class="sh key">' + (first ? '<span class="chip big">' + pct(x, b) + '</span>' : pct(x, b)) + '</td>' : '<td class="sh">(' + pct(x, b) + ')</td>'; };
+      var dclass = /직접비/.test(o.n) ? '' : cl(df);
+      t += '<tr class="r' + lv + (hot ? ' hot' : '') + '"><td class="lb"><span' + (hot ? ' class="chip"' : '') + '>' + esc(o.n) + '</span></td>';
+      t += '<td>' + c[0].toFixed(1) + '</td>' + sc(c[0], bc[0], true) + '<td>' + c[1].toFixed(1) + '</td>' + sc(c[1], bc[1], false);
+      t += '<td class="d ' + dclass + '">' + sgn(df) + '</td><td class="d ' + dclass + '">' + gtxt(c[0], c[1]) + '</td><td class="gap"></td>';
+      t += o.m.slice(0, d).map(function (x) { return '<td>' + x.toFixed(1) + '</td>'; }).join('') + '<td class="gap m25"></td>' + o.p.map(function (x) { return '<td class="m25">' + x.toFixed(1) + '</td>'; }).join('') + '</tr>';
+    });
+    $('#slxPl').innerHTML = t + '</tbody>';
+    $('#slxB25').onclick = function () {
+      var s = this.closest('.pt'), tb = $('#slxPl');
+      if (!SLX.open25) {
+        [].slice.call(tb.querySelectorAll('tr.g1 th.lb, tr.g1 th.gap:not(.m25), tr.g2 th:not(.m25)')).forEach(function (x) { var w = Math.round(x.getBoundingClientRect().width); if (w) { x.style.minWidth = w + 'px'; x.style.width = w + 'px'; } });
+        var ref = tb.querySelector('tr.g2 th:nth-child(7)'), mw = ref ? Math.round(ref.getBoundingClientRect().width) : 56;
+        tb.querySelectorAll('th.m25:not(.gap):not(.gh)').forEach(function (x) { x.style.minWidth = mw + 'px'; x.style.width = mw + 'px'; });
+      }
+      SLX.open25 = s.classList.toggle('on25'); this.setAttribute('aria-expanded', SLX.open25); this.querySelector('.pm').textContent = SLX.open25 ? '−' : '+';
+    };
+  }
+  function renderSlx() {
+    var box = $('#slxBody'), d = SL.data, sv = slxView('(매출)'), pv = slxView('(손익)'), msg = '', S = null, P = null;
+    try { if (sv) S = slxParseSales(sv); } catch (e) { msg = e.message; }
+    try { if (pv) P = slxParsePL(pv); } catch (e2) { msg = msg || e2.message; }
+    var y = S ? S.y : (P ? P.y : slNow().slice(0, 4)), Y = d.years && d.years[y], done = Y && Y.done ? Y.done : (P ? P.done : 12);
+    $('#slxTitle').textContent = '닥터빌사업부 매출/손익 현황';
+    $('#slxSub').textContent = [S ? '매출 ' + slxYY(S.y) + '년 ' + (done < 12 ? (done + 1) + '월 예측' : '12월 마감') : '', P ? '손익 ' + slxYY(P.y) + '년 ' + P.done + '월 마감' : '', '단위 억원', d.source || ''].filter(Boolean).join(' · ');
+    if (d.sheetUrl) { $('#slxLink').href = d.sheetUrl; $('#slxLink').hidden = false; } else $('#slxLink').hidden = true;
+    var warn = (S && !S.exact) || (P && !P.exact) ? '<p class="slx-warn">시트 Apps Script(sales.gs)가 이전 버전이라 표시값(소수 1자리)으로 계산했습니다. 합계·비율이 시트와 조금 다를 수 있습니다.</p>' : '';
+    if (SLX.tab === 'pl') {
+      if (!P) { box.innerHTML = '<div class="empty">' + esc(msg || '시트에 (손익) 탭이 없거나 아직 불러오지 않았습니다. [갱신]을 눌러 주세요.') + '</div>'; return; }
+      P.exact = !!pv.nv; box.innerHTML = '<div id="slxIn"></div>'; renderSlxPL($('#slxIn'), P); if (!pv.nv) box.insertAdjacentHTML('afterbegin', warn);
+    } else {
+      if (!S) { box.innerHTML = '<div class="empty">' + esc(msg || '시트에 (매출) 탭이 없거나 아직 불러오지 않았습니다. [갱신]을 눌러 주세요.') + '</div>'; return; }
+      box.innerHTML = '<div id="slxIn"></div>'; renderSlxSales($('#slxIn'), S, done); if (!S.exact) box.insertAdjacentHTML('afterbegin', warn);
+    }
   }
   // ---- 매출 화면 상단 탭: (매출) 4Q · (매출) · (손익) ------------------------------
   // Apps Script(sales.gs)가 보낸 시트 탭 격자(views)를 읽어 시트와 같은 구성(목표대비·전년대비·월별·손익)을
