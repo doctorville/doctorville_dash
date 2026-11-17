@@ -1,40 +1,55 @@
-// Nhost 로그인 토큰(JWT) 검증. Nhost Function에는 NHOST_JWT_SECRET({"type":"HS256","key":"..."})이 자동 주입됩니다.
-import {createHmac,timingSafeEqual} from 'node:crypto';
+// Nhost 로그인 토큰(JWT) 검증. Nhost Function에는 NHOST_JWT_SECRET이 자동 주입됩니다.
+// 지원: HS256/HS512(공유 키), RS256/RS384/RS512(공개 키 key). 키를 쓸 수 없으면 Hasura(GraphQL)에 토큰을 보내 검증합니다.
+import {createHmac,timingSafeEqual,createPublicKey,verify as rsaVerify} from 'node:crypto';
 const b64=s=>Buffer.from(String(s).replace(/-/g,'+').replace(/_/g,'/'),'base64');
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const fail=msg=>Object.assign(Error(msg||'로그인이 만료되었습니다. 다시 로그인해주세요.'),{status:401});
 export function jwtSecret(env=process.env){
  const raw=env.NHOST_JWT_SECRET||env.HASURA_GRAPHQL_JWT_SECRET;
- if(!raw)throw Object.assign(Error('서버에 NHOST_JWT_SECRET이 없습니다.'),{status:500});
- let cfg;try{cfg=JSON.parse(raw);}catch{throw Object.assign(Error('NHOST_JWT_SECRET 형식 오류'),{status:500});}
- if(cfg.type!=='HS256'&&cfg.type!=='HS512')throw Object.assign(Error('지원하지 않는 JWT 방식입니다: '+cfg.type+' (HS256/HS512만 지원)'),{status:500});
- return cfg;
+ if(!raw)return null;
+ try{return JSON.parse(raw);}catch{return null;}
 }
-export function verifyToken(token,env=process.env,now=Date.now()){
- const fail=msg=>Object.assign(Error(msg||'로그인이 만료되었습니다. 다시 로그인해주세요.'),{status:401});
+function decode(token){
  if(!token)throw fail('로그인이 필요합니다.');
  const parts=String(token).split('.');if(parts.length!==3)throw fail();
- let header,payload;try{header=JSON.parse(b64(parts[0]).toString('utf8'));payload=JSON.parse(b64(parts[1]).toString('utf8'));}catch{throw fail();}
- const cfg=jwtSecret(env),alg=cfg.type;
- if(header.alg!==alg)throw fail();
- const expected=createHmac(alg==='HS512'?'sha512':'sha256',cfg.key).update(parts[0]+'.'+parts[1]).digest();
- const given=b64(parts[2]);
- if(given.length!==expected.length||!timingSafeEqual(given,expected))throw fail();
+ try{return {parts,header:JSON.parse(b64(parts[0]).toString('utf8')),payload:JSON.parse(b64(parts[1]).toString('utf8'))};}catch{throw fail();}
+}
+function userOf(payload,now=Date.now()){
  if(typeof payload.exp!=='number'||payload.exp*1000<=now)throw fail();
  const claims=payload['https://hasura.io/jwt/claims']||{};
  const id=String(claims['x-hasura-user-id']||payload.sub||'');
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))throw fail();
+ if(!UUID.test(id))throw fail();
  return {id,email:payload.email||null,claims};
 }
-
-// NHOST_JWT_SECRET이 함수에 없으면 Hasura(GraphQL)에 토큰을 보내 서명을 검증합니다(대시보드 함수와 같은 방식).
+const HS={HS256:'sha256',HS512:'sha512'},RS={RS256:'sha256',RS384:'sha384',RS512:'sha512'};
+// 키로 직접 검증할 수 있으면 true/false, 할 수 없으면 null
+function verifyWithKey(parts,header,cfg){
+ if(!cfg||!cfg.key||header.alg!==cfg.type)return null;
+ const data=Buffer.from(parts[0]+'.'+parts[1]),sig=b64(parts[2]);
+ if(HS[cfg.type]){const expected=createHmac(HS[cfg.type],cfg.key).update(data).digest();return sig.length===expected.length&&timingSafeEqual(sig,expected);}
+ if(RS[cfg.type]){try{return rsaVerify(RS[cfg.type],data,createPublicKey(cfg.key),sig);}catch{return null;}}
+ return null;
+}
+export function verifyToken(token,env=process.env,now=Date.now()){
+ const {parts,header,payload}=decode(token);
+ const ok=verifyWithKey(parts,header,jwtSecret(env));
+ if(ok===null)throw Object.assign(Error('토큰 검증 키를 사용할 수 없습니다.'),{status:500});
+ if(!ok)throw fail();
+ return userOf(payload,now);
+}
+function graphqlUrl(env){
+ if(env.NHOST_GRAPHQL_URL)return env.NHOST_GRAPHQL_URL;
+ if(env.NHOST_SUBDOMAIN&&env.NHOST_REGION)return 'https://'+env.NHOST_SUBDOMAIN+'.graphql.'+env.NHOST_REGION+'.nhost.run/v1';
+ return null;
+}
 export async function verifyRequestToken(token,env=process.env,fetchImpl=fetch){
- if(env.NHOST_JWT_SECRET||env.HASURA_GRAPHQL_JWT_SECRET)return verifyToken(token,env);
- const fail=msg=>Object.assign(Error(msg||'로그인이 만료되었습니다. 다시 로그인해주세요.'),{status:401});
- if(!token||String(token).split('.').length!==3)throw fail('로그인이 필요합니다.');
- const url=env.NHOST_GRAPHQL_URL;if(!url)throw Object.assign(Error('서버에 NHOST_GRAPHQL_URL이 없습니다.'),{status:500});
+ const {parts,header,payload}=decode(token);
+ const ok=verifyWithKey(parts,header,jwtSecret(env));
+ if(ok===true)return userOf(payload);
+ if(ok===false)throw fail();
+ // 키로 검증할 수 없는 방식(JWKS 등): Hasura가 서명을 검증하도록 토큰을 보내 확인
+ const url=graphqlUrl(env);if(!url)throw Object.assign(Error('서버에 NHOST_GRAPHQL_URL이 없습니다.'),{status:500});
  const r=await fetchImpl(url,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({query:'query{__typename}'})});
  const j=await r.json().catch(()=>({}));if(!r.ok||j.errors?.length)throw fail();
- let payload;try{payload=JSON.parse(b64(String(token).split('.')[1]).toString('utf8'));}catch{throw fail();}
- const claims=payload['https://hasura.io/jwt/claims']||{},id=String(claims['x-hasura-user-id']||payload.sub||'');
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))throw fail();
- return {id,email:payload.email||null,claims};
+ return userOf(payload);
 }
