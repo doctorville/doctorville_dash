@@ -731,6 +731,48 @@ body.mc-on #app > section, body.mc-on #memberFoot, body.mc-on .member-only, body
 .mc-t th { color: var(--muted); font-weight: 500; font-size: 11.5px; }
 .mc-t .cur { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 .mc-t tr.sum td { font-weight: 700; border-top: 1px solid var(--axis); }
+/* 화면별 KPI 탭 (2026-11-19) */
+.kx-tabs[hidden], .kxp { display: none; }
+body.kx-on .kxp { display: block; }
+body.kx-on #schedApp > :not(.kx-tabs):not(.kxp), body.kx-on #confApp > :not(.kx-tabs):not(.kxp),
+body.kx-on #adsApp > :not(.kx-tabs):not(.kxp), body.kx-on #pointApp > :not(.kx-tabs):not(.kxp) { display: none !important; }
+body.kx-on #pdfBtn { display: none !important; }
+.kx-rev { margin: 0 0 18px; }
+.kx-rh { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 10px; }
+.kx-rh h3 { margin: 0; font-size: 15px; }
+.kx-rh label { font-size: 13px; display: inline-flex; gap: 6px; align-items: center; }
+.kx-rh select, .kx-f select { font: inherit; font-size: 13px; padding: 4px 8px; border: 1px solid var(--axis); border-radius: 8px; background: var(--surface); color: var(--ink); max-width: 240px; }
+.kx-note { font-size: 11.5px; color: var(--muted); }
+.kx-rg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.kx-rg2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kr { padding: 14px 16px; }
+.kr-h { font-size: 13px; font-weight: 700; color: var(--ink-2); margin-bottom: 8px; }
+.kr-b { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kr-c + .kr-c { border-left: 1px solid var(--grid); padding-left: 12px; }
+.kr-l { font-size: 11.5px; color: var(--muted); }
+.kr-v { font-size: 22px; font-weight: 700; margin: 2px 0 6px; font-variant-numeric: tabular-nums; }
+.kr-r { display: flex; align-items: baseline; gap: 5px; font-size: 12px; color: var(--ink-2); margin-top: 3px; white-space: nowrap; }
+.kr-r span { color: var(--muted); }
+.kr-r b { font-variant-numeric: tabular-nums; }
+.kr-r b.flat { color: var(--muted); font-weight: 500; }
+.kr-r i { font-style: normal; font-size: 11.5px; }
+.kr-r i.up, .kx-na small.up { color: var(--up); } .kr-r i.down, .kx-na small.down { color: var(--down); }
+.kx-k6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.kx-k3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kx-f { gap: 8px 14px; }
+.kx-f label { display: inline-flex; gap: 6px; align-items: center; }
+.kx-t td small, .kx-t th small { display: block; font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.kx-t tr.sub td { color: var(--ink-2); font-size: 12px; }
+.kx-t td.l { text-align: left; white-space: normal; min-width: 120px; }
+.kx-tall { min-height: 280px; }
+.kx-na input { width: 56px; font: inherit; font-size: 12.5px; padding: 3px 5px; border: 1px solid var(--axis); border-radius: 6px; background: var(--surface); color: var(--ink); text-align: right; }
+.kx-na-bar { padding: 10px 12px; text-align: right; }
+.kx-na-form { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+.kx-na-form input, .kx-na-form select { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--axis); border-radius: 8px; background: var(--surface); color: var(--ink); width: 130px; }
+.kx-na-form input.w { width: 240px; flex: 1 1 200px; }
+.kx-nl select { font: inherit; font-size: 12px; padding: 2px 4px; }
+@media (max-width: 1100px) { .kx-k6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kx-rg { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .kx-k6, .kx-k3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kx-rg2 { grid-template-columns: minmax(0, 1fr); } .kr-b { grid-template-columns: minmax(0, 1fr); } .kr-c + .kr-c { border-left: 0; padding-left: 0; border-top: 1px solid var(--grid); padding-top: 8px; } }
 /* 현황: 달력 */
 #schedMain, #sadsMain, #confMain { display: none; }
 body.view-sched #schedMain, body.view-sads #sadsMain, body.view-conf #confMain { display: block; }
@@ -1293,6 +1335,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="schedMain">
   <div class="wrap" id="schedApp">
+    <div class="sl-tabs kx-tabs" id="kxTabs_sched" role="tablist" aria-label="화면 탭" hidden></div>
+    <div class="kxp" id="kxp_sched"></div>
     <section>
       <div class="sec-head">
         <div class="cal-head"><button type="button" class="btn" id="schPrev" aria-label="이전 달">‹</button><h2 id="schMonth"></h2><button type="button" class="btn" id="schNext" aria-label="다음 달">›</button><button type="button" class="btn" id="schToday">오늘</button><button type="button" class="btn accent" id="schAdd">+ 세미나 등록</button></div>
@@ -1315,6 +1359,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="confMain">
   <div class="wrap" id="confApp">
+    <div class="sl-tabs kx-tabs" id="kxTabs_conf" role="tablist" aria-label="화면 탭" hidden></div>
+    <div class="kxp" id="kxp_conf"></div>
     <section>
       <div class="sec-head">
         <div class="cal-head"><button type="button" class="btn" id="cfPrev" aria-label="이전 달">‹</button><h2 id="cfMonth"></h2><button type="button" class="btn" id="cfNext" aria-label="다음 달">›</button><button type="button" class="btn" id="cfToday">오늘</button></div>
@@ -1403,6 +1449,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="adsMain">
   <div class="wrap" id="adsApp">
+    <div class="sl-tabs kx-tabs" id="kxTabs_ads" role="tablist" aria-label="화면 탭" hidden></div>
+    <div class="kxp" id="kxp_ads"></div>
     <section>
       <div class="sec-head">
         <div><h2>닥터빌 광고</h2><p id="adSrc">2026 닥터빌 광고 운영 현황판 · 통합_Raw 집계</p></div>
@@ -1660,6 +1708,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="pointMain">
   <div class="wrap" id="pointApp">
+    <div class="sl-tabs kx-tabs" id="kxTabs_points" role="tablist" aria-label="화면 탭" hidden></div>
+    <div class="kxp" id="kxp_points"></div>
     <section>
       <div class="sec-head">
         <div>
@@ -2352,7 +2402,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     if (/^api\|get\|dv|^file\|data\/(index|snapshots)/.test(key)) return 'members';
     if (/^api\|activity/.test(key)) return 'activity';
     if (/^api\|sales/.test(key)) return 'sales';
-    if (/^api\|schedule/.test(key)) return 'sched';
+    if (/^api\|schedule|^api\|webinar|^kx\|nonacad/.test(key)) return 'sched';
     if (/^api\|ads/.test(key)) return 'ads';
     if (/seminar/.test(key)) return 'seminar';
     if (/pv_points/.test(key)) return 'ppoints';
@@ -2565,7 +2615,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   // 구글시트 응답을 DB 저장본으로 캐시: get(회원 집계)·activity·sales·schedule
   //   refresh(회원 [갱신]) = 원본 재집계 → 'get' 저장본을 덮어쓰고, 주차·월별 저장본은 비움
   //   fresh:true = 원본 다시 읽기 → 저장본 덮어씀
-  var API_DB = { get: function (r) { return !!r.snap; }, activity: function (r) { return !!r.activity; }, activityPv: function (r) { return !!r.activity; }, sales: function (r) { return !!(r.sales && r.sales.years); }, schedule: function (r) { return !!r.schedule; }, calendar: function (r) { return !!(r.calendar && r.calendar.events); }, ads: function (r) { return !!(r.ads && r.ads.agg); } };
+  var API_DB = { get: function (r) { return !!r.snap; }, activity: function (r) { return !!r.activity; }, activityPv: function (r) { return !!r.activity; }, sales: function (r) { return !!(r.sales && r.sales.years); }, schedule: function (r) { return !!r.schedule; }, calendar: function (r) { return !!(r.calendar && r.calendar.events); }, ads: function (r) { return !!(r.ads && r.ads.agg); }, webinar: function (r) { return !!(r.webinar && r.webinar.rows); } };
   var API_TTL = { calendar: 30 * 60 * 1000 };   // 캘린더는 30분 지나면 원본 재확인 (실패 시 저장본 표시)
   function stableStr(o) { return JSON.stringify(Object.keys(o).sort().reduce(function (a, k) { a[k] = o[k]; return a; }, {})); }
   function apiKey(action, extra, svc) {
@@ -2624,6 +2674,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   $('#srcLabel').addEventListener('click', function () { if (!state.remote && state.remoteErr && (VIEW === 'members' || VIEW === 'pharm')) toast(state.remoteErr, true, 15000); });
   $('#refreshBtn').addEventListener('click', function () {
     var btn = this;
+    if (kxOn()) return kxRefresh(btn);
     if (isPts()) return pointRefresh(btn);
     if (VIEW === 'activity') return loadActivity(true, btn);
     if (VIEW === 'pactivity') return loadPvActivity(true, btn);
@@ -5415,6 +5466,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   }
   function renderAds() {
     if (VIEW !== 'ads') return;
+    setTimeout(kxAfter, 0);
     var d = AD.data && adMerge(AD.data);
     $('#subtitle').textContent = !INTERNAL ? '협력사 계정에서는 광고 매출을 볼 수 없습니다' : d ? '닥터빌 광고 · ' + (AD.basis === 'exec' ? '실행월' : '정산월') + ' 기준 · 시트 집계 ' + new Date(d.fetchedAt).toLocaleString('ko-KR', { hour12: false }) : (AD.loading ? '광고 현황판을 집계하는 중…' : '광고 데이터를 불러오지 못했습니다');
     $('#srcLabel').textContent = d ? '데이터: 광고 현황판 통합_Raw (' + d.rows + '행)' : '';
@@ -5851,13 +5903,17 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   // stacks: [{name, color, vals[]}] 아래에서 위로 / opts: {fmtY, fmtV, title(i), top(i)→문자열, line:{name,color,vals,dash}, ann(i)→[문자열], h}
   function kxBars(host, labels, stacks, opts) {
     opts = opts || {};
-    var n = labels.length, tot = labels.map(function (_, i) { return stacks.reduce(function (s, st) { return s + (+st.vals[i] || 0); }, 0); });
+    var n = labels.length, grp = !!opts.group, tot = labels.map(function (_, i) { return grp ? Math.max.apply(null, stacks.map(function (st) { return +st.vals[i] || 0; })) : stacks.reduce(function (s, st) { return s + (+st.vals[i] || 0); }, 0); });
     var mx = Math.max.apply(null, tot.concat(opts.line ? opts.line.vals.map(function (v) { return +v || 0; }) : [0]));
     if (!(mx > 0)) { host.innerHTML = '<p class="empty">데이터가 없습니다.</p>'; return; }
     var f = frame(host, { min: 0, max: axTop(mx), h: opts.h || 240, ml: opts.ml || 52, fmtY: opts.fmtY, label: opts.label || '' });
     var step = f.iw / n, bw = Math.max(4, Math.min(34, step * 0.62)), xOf = function (i) { return f.m.l + step * (i + 0.5); }, y0 = f.y(0);
     for (var i = 0; i < n; i++) {
       var acc = 0;
+      if (grp) {
+        var gw = bw / stacks.length;
+        stacks.forEach(function (st, k) { var v = +st.vals[i] || 0; if (v > 0) el('path', { d: barPath(xOf(i) - bw / 2 + gw * k + 0.5, y0, Math.max(1, gw - 1), f.y(v)), fill: st.color, opacity: st.op || 1 }, f.svg); });
+      } else
       stacks.forEach(function (st, k) {
         var v = +st.vals[i] || 0; if (v <= 0) return;
         var ya = f.y(acc), yb = f.y(acc + v); acc += v;
@@ -5882,7 +5938,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     xLabels(f, labels, xOf);
     hoverCols(f, n, xOf, step, function (i) {
       var rows = stacks.slice().reverse().map(function (s) { return { k: s.name, v: opts.fmtV(+s.vals[i] || 0), color: s.color }; });
-      if (stacks.length > 1) rows.push({ k: '합계', v: opts.fmtV(tot[i]) });
+      if (stacks.length > 1 && !grp) rows.push({ k: '합계', v: opts.fmtV(tot[i]) });
       if (opts.line) rows.push({ k: opts.line.name, v: opts.line.vals[i] == null ? '–' : opts.fmtV(+opts.line.vals[i]), color: opts.line.color });
       (opts.extra ? opts.extra(i) : []).forEach(function (r) { rows.push(r); });
       return tipRows(opts.title ? opts.title(i) : labels[i], rows);
@@ -5981,6 +6037,406 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
         extra: function (i) { return [{ k: 'MAU 비율', v: vMau[i] == null ? '–' : kxPct(vMau[i], vTot[i]).toFixed(1) + '%' }]; }, label: '회원 수와 MAU' });
   }
 
+  // =====================================================================
+  // 화면별 KPI 탭 (2026-11-19) — 포인트 · 현황>세미나(웨비나) · 현황>컨퍼런스(컨퍼런스빌) · 광고
+  //   매출·목표·전년 대비는 매출 마감 시트 (매출) 탭(목표대비·전년동기대비 표)으로 통일 (SL.data, sales.gs)
+  // =====================================================================
+  var KX = { tab: {}, month: {}, wf: { type: 'all', cat: 'all', co: 'all' }, web: null, webBusy: false, webErr: '', slBusy: false, slErr: '', na: null, naBusy: false, naErr: '' };
+  var KX_VIEWS = { points: { name: '포인트 KPI', app: '#pointApp' }, sched: { name: '웨비나 KPI', app: '#schedApp' }, conf: { name: '컨퍼런스빌 KPI', app: '#confApp' }, ads: { name: '광고 KPI', app: '#adsApp' } };
+  var KX_MAIN = { points: '포인트 현황', sched: '편성 달력', conf: '일정 달력', ads: '광고 현황판' };
+  try { var kt = JSON.parse(localStorage.getItem('mv-kx-tab') || '{}'); if (kt && typeof kt === 'object') KX.tab = kt; } catch (e) {}
+  function kxOn() { return !!KX_VIEWS[VIEW] && KX.tab[VIEW] === 'kpi' && INTERNAL; }
+  function kxSync() {
+    Object.keys(KX_VIEWS).forEach(function (v) {
+      var bar = $('#kxTabs_' + v); if (!bar) return;
+      bar.hidden = !(VIEW === v && INTERNAL);
+      if (VIEW !== v) return;
+      bar.innerHTML = [['main', KX_MAIN[v]], ['kpi', KX_VIEWS[v].name]].map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + ((KX.tab[v] || 'main') === t[0]) + '">' + t[1] + '</button>'; }).join('');
+      bar.querySelectorAll('button').forEach(function (b) {
+        b.onclick = function () { KX.tab[v] = b.dataset.tab; try { localStorage.setItem('mv-kx-tab', JSON.stringify(KX.tab)); } catch (e) {} kxSync(); };
+      });
+    });
+    document.body.classList.toggle('kx-on', kxOn());
+    if (kxOn()) renderKx();
+  }
+  function kxAfter() { if (kxOn()) renderKx(); }
+  function kxNeedSheet() { return CONFIG.appsScriptUrl && (PW || DB.on); }
+  function kxLoadSales(fresh) {
+    if (KX.slBusy || (SL.data && !fresh)) return Promise.resolve();
+    if (!kxNeedSheet()) { KX.slErr = '매출 시트 연동 정보가 없습니다. 매출 메뉴에서 먼저 불러와 주세요.'; return Promise.resolve(); }
+    KX.slBusy = true; KX.slErr = '';
+    return fetchSales(!!fresh).then(function (d) { SL.data = d; }).catch(function (e) { KX.slErr = salesApiErr(e); })
+      .then(function () { KX.slBusy = false; kxAfter(); });
+  }
+  function kxLoadWeb(fresh) {
+    if (KX.webBusy || (KX.web && !fresh)) return Promise.resolve();
+    if (!kxNeedSheet()) { KX.webErr = '구글시트 연동 정보가 없습니다.'; return Promise.resolve(); }
+    KX.webBusy = true; KX.webErr = '';
+    return api('webinar', fresh ? { fresh: true } : {}).then(function (res) { if (!res.webinar || !res.webinar.rows) throw new Error('old_gs_status'); KX.web = res.webinar; })
+      .catch(function (e) { KX.webErr = statusApiErr(e, '편성표 RAW 탭을 불러오지 못했습니다'); })
+      .then(function () { KX.webBusy = false; kxAfter(); });
+  }
+  function kxRefresh(btn) {
+    btn.disabled = true; btn.textContent = '갱신 중…';
+    var jobs = [kxLoadSales(true)];
+    if (VIEW === 'sched') { jobs.push(kxLoadWeb(true)); KX.na = null; jobs.push(kxLoadNa()); }
+    if (VIEW === 'ads') jobs.push(loadAds(true));
+    if (VIEW === 'points') { btn.disabled = false; btn.textContent = '갱신'; return pointRefresh(btn); }
+    return Promise.all(jobs).then(function () { btn.disabled = false; btn.textContent = '갱신'; toast('매출 시트' + (VIEW === 'sched' ? '·편성표' : VIEW === 'ads' ? '·광고 현황판' : '') + '를 다시 불러왔습니다.'); renderKx(); });
+  }
+
+  // ---- 매출 시트 항목 값 ------------------------------------------------------------
+  // 반환: {y, yp, done(1~12), get(io, item) → {mo[12], mt[12]|null, mp[12]}}  io: '전체'|'내부'|'외부', item: (매출) 탭 항목명 배열
+  function kxSales() {
+    if (!SL.data) return null;
+    var v = slxView('(매출)'); if (!v) return { err: '매출 시트에 (매출) 탭 데이터가 없습니다. 매출 메뉴에서 [갱신]을 눌러 주세요.' };
+    var S; try { S = slxParseSales(v); } catch (e) { return { err: e.message }; }
+    var grp = function (T) { var G = '', o = { '내부': {}, '외부': {} }; T.forEach(function (r) { if (r.l === '1') G = r.n; else if (r.l === 't') G = ''; else if (o[G]) o[G][r.n] = r; }); return o; };
+    var g1 = grp(S.T1), g2 = grp(S.T2), Z = function () { return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; };
+    var done = 0, YD = SL.data.years && SL.data.years[S.y]; (S.T2[0] ? S.T2[0].mo : S.T1[0].mo).forEach(function (x, k) { if (Math.abs(x) > 1e-9) done = k + 1; });
+    if (YD && YD.done > 0 && YD.done < done) done = YD.done;   // raw (세부) 마감 월 우선 (이후 달은 예측값)
+    var add = function (a, b) { return a.map(function (x, k) { return x + (b ? b[k] || 0 : 0); }); };
+    function one(io, items) {
+      var mo = Z(), mt = null, mp = Z();
+      items.forEach(function (it) {
+        var r1 = g1[io][it], r2 = g2[io][it];
+        if (r2) { mo = add(mo, r2.mo); mp = add(mp, r2.mp12); } else if (r1) mo = add(mo, r1.mo);
+        if (r1 && r1.mt && r1.mt.some(function (x) { return Math.abs(x) > 1e-9; })) mt = add(mt || Z(), r1.mt);
+      });
+      return { mo: mo, mt: mt, mp: mp };
+    }
+    return { y: S.y, yp: S.yp, done: done || 12, get: function (io, items) {
+      if (io !== '전체') return one(io, items);
+      var a = one('내부', items), b = one('외부', items);
+      return { mo: add(a.mo, b.mo), mt: a.mt || b.mt ? add(a.mt || Z(), b.mt) : null, mp: add(a.mp, b.mp) };
+    } };
+  }
+  function kxEok(v) { if (!v || Math.abs(v) < 5e-5) return '0'; var a = Math.abs(v); return a >= 1 || a === 0 ? (Math.round(v * 10) / 10).toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '억' : fmt(Math.round(v * 10000)) + '만'; }
+  function kxRate(a, b) { return b ? Math.round(a / b * 100) + '%' : '–'; }
+  function kxVs(cur, base, label) {
+    if (!base) return '<div class="kr-r"><span>' + label + '</span><b class="flat">' + (base === null ? '목표 없음' : '–') + '</b></div>';
+    var d = cur - base, cls = d >= 0 ? 'up' : 'down';
+    return '<div class="kr-r"><span>' + label + '</span><b>' + kxRate(cur, base) + '</b><i class="' + cls + '">' + (d >= 0 ? '+' : '−') + kxEok(Math.abs(d)) + '</i></div>';
+  }
+  // 매출 KPI 카드 묶음: 전체·내부·외부 × (당월 / 누계) × (목표 대비 / 전년 대비)
+  function kxRevHtml(title, items, mKey) {
+    var S = kxSales();
+    if (!S) return '<div class="kx-rev"><p class="empty">' + (KX.slBusy ? '매출 시트를 불러오는 중…' : (KX.slErr || '매출 시트를 불러오는 중…')) + '</p></div>';
+    if (S.err) return '<div class="kx-rev"><p class="empty">' + esc(S.err) + '</p></div>';
+    var m = KX.month[mKey] || S.done; if (m > 12) m = 12; KX.month[mKey] = m;
+    var i = m - 1, sum = function (a) { var t = 0; for (var k = 0; k <= i; k++) t += a[k] || 0; return t; };
+    var cols = ['전체', '내부', '외부'].map(function (io) {
+      var d = S.get(io, items), noT = !d.mt;
+      var mo = d.mo[i], mt = noT ? null : d.mt[i], mp = d.mp[i], cm = sum(d.mo), ct = noT ? null : sum(d.mt), cp = sum(d.mp);
+      return '<div class="card kr"><div class="kr-h">' + io + ' 매출</div>' +
+        '<div class="kr-b"><div class="kr-c"><div class="kr-l">' + m + '월 (당월)</div><div class="kr-v">' + kxEok(mo) + '</div>' + kxVs(mo, mt, '목표 대비') + kxVs(mo, mp, '전년동월 대비') + '</div>' +
+        '<div class="kr-c"><div class="kr-l">1~' + m + '월 누계</div><div class="kr-v">' + kxEok(cm) + '</div>' + kxVs(cm, ct, '목표 대비') + kxVs(cm, cp, '전년동기 대비') + '</div></div></div>';
+    }).join('');
+    var opts = ''; for (var k = 1; k <= 12; k++) opts += '<option value="' + k + '"' + (k === m ? ' selected' : '') + '>' + S.y + '년 ' + k + '월' + (k > S.done ? ' (마감 전)' : '') + '</option>';
+    return '<div class="kx-rev"><div class="kx-rh"><h3>' + esc(title) + ' 매출</h3><label>기준 월 <select class="kx-rm" data-k="' + mKey + '">' + opts + '</select></label>' +
+      '<span class="kx-note">매출 마감 시트 (매출) 탭 · 항목 「' + esc(items.join('·')) + '」 · 목표가 없는 항목은 「목표 없음」</span></div><div class="kx-rg">' + cols + '</div></div>';
+  }
+  function kxBindRev(box) { box.querySelectorAll('.kx-rm').forEach(function (s) { s.onchange = function () { KX.month[s.dataset.k] = +s.value; renderKx(); }; }); }
+  // 매출 시트 → 전년도 1월 ~ 올해 12월 월별 값 (마감 이후 달은 null)
+  function kxSalesSeries(S, io, items) {
+    var d = S.get(io, items), out = { ym: [], act: [], tgt: [] };
+    for (var k = 0; k < 12; k++) { out.ym.push(S.yp + '-' + ('0' + (k + 1)).slice(-2)); out.act.push(d.mp[k]); out.tgt.push(null); }
+    for (k = 0; k < 12; k++) { out.ym.push(S.y + '-' + ('0' + (k + 1)).slice(-2)); out.act.push(k < S.done ? d.mo[k] : null); out.tgt.push(d.mt ? d.mt[k] : null); }
+    return out;
+  }
+  function kxLab(ym) { return ym.map(function (k) { return k.slice(2, 4) + '.' + k.slice(5, 7); }); }
+
+  // ---- 공통 렌더 진입 ----------------------------------------------------------------
+  function renderKx() {
+    if (!kxOn()) return;
+    var box = $('#kxp_' + VIEW); if (!box) return;
+    if (!SL.data && !KX.slBusy && !KX.slErr) kxLoadSales(false);
+    try {
+      if (VIEW === 'points') renderKxPoints(box);
+      else if (VIEW === 'sched') renderKxWeb(box);
+      else if (VIEW === 'conf') renderKxConf(box);
+      else if (VIEW === 'ads') renderKxAds(box);
+    } catch (e) { box.innerHTML = '<p class="empty">화면을 그리지 못했습니다: ' + esc(e.message || String(e)) + '</p>'; console.error(e); }
+    kxBindRev(box);
+  }
+
+  // ---- ⑤ 포인트 ----------------------------------------------------------------------
+  function renderKxPoints(box) {
+    var d = P.data;
+    if (!d || !d.months) { box.innerHTML = kxRevHtml('포인트샵', ['포인트샵'], 'pt') + '<p class="empty">' + (P.loaded ? '포인트 데이터가 없습니다.' : '포인트 데이터를 불러오는 중…') + '</p>'; return; }
+    var ix = []; d.months.forEach(function (m, i) { if (m >= KX_FROM) ix.push(i); });
+    if (!ix.length) ix = d.months.map(function (_, i) { return i; });
+    var months = ix.map(function (i) { return d.months[i]; });
+    var curM = KX.month.ptm && months.indexOf(KX.month.ptm) >= 0 ? KX.month.ptm : months[months.length - 1];
+    var nowYm = new Date(Date.now() + KST_MS).toISOString().slice(0, 7);
+    if (!KX.month.ptm && curM === nowYm && months.length > 1) curM = months[months.length - 2];   // 진행 중인 달은 기본값에서 제외
+    KX.month.ptm = curM;
+    var c = d.months.indexOf(curM), p = c - 1;
+    var E = d.earn.amt[c] || 0, U = d.use.amt[c] || 0, eu = d.earn.users[c] || 0, uu = d.use.users[c] || 0;
+    var bal = (d.balanceTotal || d.balance)[c];
+    var chg = function (a) { return p >= 0 && a[p] ? ' · 전월 대비 ' + kxDelta(kxPct(a[c] - a[p], a[p]), '%', 1) : ''; };
+    var kp = [
+      kxCard('월 적립', bigP(E), 'P', fmt(d.earn.cnt[c] || 0) + '건' + chg(d.earn.amt)),
+      kxCard('월 사용', bigP(U), 'P', fmt(d.use.cnt[c] || 0) + '건' + chg(d.use.amt)),
+      kxCard('적립 대비 사용 비율', E ? (U / E * 100).toFixed(1) : '–', E ? '%' : '', '사용 ÷ 적립 (소멸·취소 제외)'),
+      kxCard('잔여 누적 포인트', bigP(bal || 0), 'P', curM.replace('-', '.') + ' 말 기준 (적립 + 충전 잔여)'),
+      kxCard('인당 평균 적립', eu ? fmt(Math.round(E / eu)) : '–', 'P', '적립 인원 ' + fmt(eu) + '명'),
+      kxCard('인당 평균 사용', uu ? fmt(Math.round(U / uu)) : '–', 'P', '사용 인원 ' + fmt(uu) + '명')
+    ].join('');
+    // 방법별 상위 5 + 기타
+    function top(meth, n) {
+      var names = Object.keys(meth || {}), tot = {};
+      names.forEach(function (k) { tot[k] = ix.reduce(function (t, i) { return t + ((meth[k].amt || [])[i] || 0); }, 0); });
+      names.sort(function (a, b) { return tot[b] - tot[a]; });
+      return { top: names.slice(0, n), rest: names.slice(n) };
+    }
+    var col = ['--s1', '--s2', '--s3', '--s4', '--s5'].map(css);
+    var em = top(d.methods && d.methods.earn, 5), um0 = d.methods && d.methods.use || {};
+    var zero = Object.keys(um0).filter(function (k) { return /제로\s*샵|zero\s*shop/i.test(k); });
+    var umt = top(um0, 5);
+    zero.forEach(function (z) { if (umt.top.indexOf(z) < 0) { umt.top.push(z); umt.rest = umt.rest.filter(function (x) { return x !== z; }); } });
+    var stacksOf = function (meth, t) {
+      var s = t.top.map(function (k, j) { return { name: k, color: col[j % col.length], vals: ix.map(function (i) { return (meth[k].amt || [])[i] || 0; }) }; });
+      if (t.rest.length) s.push({ name: '기타 ' + t.rest.length + '개', color: css('--axis'), op: 0.6, vals: ix.map(function (i) { return t.rest.reduce(function (a, k) { return a + ((meth[k].amt || [])[i] || 0); }, 0); }) });
+      return s;
+    };
+    var big = d.bigUsers, ths = big ? big.values : [100000, 200000];
+    var thL = ths.map(function (v) { return fmt(v / 10000) + '만'; });
+    var tm = months.slice().reverse();
+    var rowsBig = '';
+    if (big) {
+      [['earn', '적립'], ['use', '사용']].forEach(function (kk) {
+        var all = d[kk[0]].users;
+        rowsBig += '<tr class="sum"><td>' + kk[1] + ' 인원 (전체)</td>' + tm.map(function (m) { var i = d.months.indexOf(m); return '<td' + (m === curM ? ' class="cur"' : '') + '>' + fmt(all[i] || 0) + '</td>'; }).join('') + '</tr>';
+        ths.forEach(function (th, j) {
+          rowsBig += '<tr><td>' + kk[1] + ' ' + thL[j] + '원 이상</td>' + tm.map(function (m) { var i = d.months.indexOf(m), n = (big[kk[0]][j] || [])[i] || 0; return '<td' + (m === curM ? ' class="cur"' : '') + '>' + fmt(n) + '<small>' + (all[i] ? (n / all[i] * 100).toFixed(1) + '%' : '') + '</small></td>'; }).join('') + '</tr>';
+        });
+      });
+    }
+    var tblBig = big ? '<table class="mc-t kx-t"><thead><tr><th>구분</th>' + tm.map(function (m) { return '<th' + (m === curM ? ' class="cur"' : '') + '>' + m.slice(2, 4) + '.' + m.slice(5, 7) + '</th>'; }).join('') + '</tr></thead><tbody>' + rowsBig + '</tbody></table>'
+      : '<p class="empty">고액 적립·사용 인원은 포인트 갱신 서버를 새 버전으로 다시 켠 뒤 [갱신]을 누르면 표시됩니다. (회원별 월 합계 ' + thL.join('·') + '원 이상)</p>';
+    box.innerHTML = kxRevHtml('포인트샵', ['포인트샵'], 'pt') +
+      '<div class="mc-ctl"><label for="kxPtM">포인트 기준 월</label><select id="kxPtM">' + months.slice().reverse().map(function (m) { return '<option value="' + m + '"' + (m === curM ? ' selected' : '') + '>' + kxYmLabel(m) + (m === nowYm ? ' (진행 중)' : '') + '</option>'; }).join('') + '</select><span class="mc-note">포인트 원장(포인트Raw CSV) 집계 · 1P = 1원</span></div>' +
+      '<section><div class="kpis kx-k6">' + kp + '</div></section>' +
+      '<section><div class="grid2">' +
+        '<div class="card"><h3>월별 적립 · 사용</h3><ul class="legend" id="kxPtLg1"></ul><div class="chart" id="kxPt1"></div></div>' +
+        '<div class="card"><h3>월별 적립처 금액</h3><p class="desc">상위 5개 적립 방법 + 기타 · 툴팁에 적립 인원·평균 적립</p><ul class="legend" id="kxPtLg2"></ul><div class="chart" id="kxPt2"></div></div>' +
+        '<div class="card"><h3>월별 사용처 금액</h3><p class="desc" id="kxPtZ"></p><ul class="legend" id="kxPtLg3"></ul><div class="chart" id="kxPt3"></div></div>' +
+        '<div class="card"><h3>제로샵 사용 금액 · 비중</h3><p class="desc">막대 = 제로샵 사용 금액 · 막대 위 % = 전체 사용 중 비중</p><div class="chart" id="kxPt4"></div></div>' +
+      '</div></section>' +
+      '<section><div class="sec-head"><div><h2>고액 적립·사용 인원</h2><p>회원별 월 합계 기준 · 괄호 안 % = 그 달 전체 적립(사용) 인원 대비</p></div></div><div class="card mc-tw">' + tblBig + '</div></section>';
+    $('#kxPtM').onchange = function () { KX.month.ptm = this.value; renderKx(); };
+    var lab = kxLab(months), ttl = function (i) { return kxYmLabel(months[i]); }, fP = function (v) { return fmt(Math.round(v)) + 'P'; };
+    var sE = { name: '적립', color: css('--s1'), vals: ix.map(function (i) { return d.earn.amt[i] || 0; }) }, sU = { name: '사용', color: css('--s2'), vals: ix.map(function (i) { return d.use.amt[i] || 0; }) };
+    $('#kxPtLg1').innerHTML = kxLegend([sE, sU]);
+    kxBars($('#kxPt1'), lab, [sE, sU], { group: true, title: ttl, fmtV: fP, fmtY: axisP, label: '월별 적립 사용',
+      extra: function (k) { var i = ix[k]; return [{ k: '사용 비율', v: d.earn.amt[i] ? (d.use.amt[i] / d.earn.amt[i] * 100).toFixed(1) + '%' : '–' }]; } });
+    if (d.methods) {
+      var s2 = stacksOf(d.methods.earn, em); $('#kxPtLg2').innerHTML = kxLegend(s2);
+      kxBars($('#kxPt2'), lab, s2, { title: ttl, fmtV: fP, fmtY: axisP, label: '적립처별', extra: function (k) { var i = ix[k], n = d.earn.users[i] || 0; return [{ k: '적립 인원', v: fmt(n) + '명' }, { k: '평균 적립', v: n ? fP(d.earn.amt[i] / n) : '–' }]; } });
+      var s3 = stacksOf(um0, umt); $('#kxPtLg3').innerHTML = kxLegend(s3);
+      var zv = ix.map(function (i) { return zero.reduce(function (a, k) { return a + ((um0[k].amt || [])[i] || 0); }, 0); });
+      $('#kxPtZ').textContent = '상위 5개 사용 방법 + 기타' + (zero.length ? ' (제로샵 별도 표시)' : '') + ' · 툴팁에 사용 인원·평균 사용·제로샵 비중';
+      kxBars($('#kxPt3'), lab, s3, { title: ttl, fmtV: fP, fmtY: axisP, label: '사용처별', extra: function (k) { var i = ix[k], n = d.use.users[i] || 0, u = d.use.amt[i] || 0; return [{ k: '사용 인원', v: fmt(n) + '명' }, { k: '평균 사용', v: n ? fP(u / n) : '–' }, { k: '제로샵 비중', v: zero.length && u ? (zv[k] / u * 100).toFixed(1) + '%' : '–' }]; } });
+      if (zero.length) kxBars($('#kxPt4'), lab, [{ name: '제로샵 사용', color: css('--s3'), vals: zv }], { title: ttl, fmtV: fP, fmtY: axisP, label: '제로샵', top: function (k) { var u = d.use.amt[ix[k]] || 0; return u && zv[k] ? (zv[k] / u * 100).toFixed(1) + '%' : ''; },
+        extra: function (k) { var u = d.use.amt[ix[k]] || 0; return [{ k: '전체 사용', v: fP(u) }, { k: '제로샵 비중', v: u ? (zv[k] / u * 100).toFixed(1) + '%' : '–' }]; } });
+      else $('#kxPt4').innerHTML = '<p class="empty">포인트 사용 방법에 「제로샵」 항목이 없습니다.</p>';
+    }
+  }
+
+  // ---- ② 웨비나 (현황 > 세미나) --------------------------------------------------------
+  var KX_WTYPES = ['웹심포지엄', '라이브세미나'];
+  function kxWebRows() {
+    var W = KX.web; if (!W) return [];
+    var K = W.keys, at = function (k) { return K.indexOf(k); };
+    var iy = at('ym'), iio = at('io'), it = at('type'), ic = at('cat'), ico = at('co'), isv = at('sv'), iac = at('ac'), itx = at('tx'), ist = at('st');
+    return W.rows.map(function (r) {
+      var t = String(r[it] || ''), tp = KX_WTYPES.filter(function (w) { return t.indexOf(w) >= 0; })[0] || '';
+      return { ym: r[iy], io: /내부/.test(r[iio]) ? '내부' : /외부/.test(r[iio]) ? '외부' : '미기재', type: tp, cat: String(r[ic] || '').replace(/\(비공개\)/g, '').trim() || '미기재', co: r[ico] || '미기재',
+        sv: String(r[isv] || '').trim(), ac: String(r[iac] || ''), tx: String(r[itx] || ''), st: ist >= 0 ? String(r[ist] || '') : '' };
+    }).filter(function (o) { return o.type && !/사전녹화/.test(o.tx) && !/취소|실패/.test(o.st); });
+  }
+  function kxDeep(sv) { return /심화/.test(sv || ''); }
+  function kxNonAc(o) { return /비학술/.test(o.ac); }
+  function renderKxWeb(box) {
+    if (!KX.web && !KX.webBusy && !KX.webErr) kxLoadWeb(false);
+    if (!KX.na && !KX.naBusy) kxLoadNa();
+    var rev = kxRevHtml('웨비나', ['웨비나'], 'web');
+    if (!KX.web) { box.innerHTML = rev + '<p class="empty">' + (KX.webErr || '편성표 RAW 탭을 불러오는 중…') + '</p>'; return; }
+    var all = kxWebRows(), F = KX.wf;
+    var cats = {}, cos = {}; all.forEach(function (o) { cats[o.cat] = (cats[o.cat] || 0) + 1; cos[o.co] = (cos[o.co] || 0) + 1; });
+    var rows = all.filter(function (o) { return (F.type === 'all' || o.type === F.type) && (F.cat === 'all' || o.cat === F.cat) && (F.co === 'all' || o.co === F.co); });
+    var nowYm = new Date(Date.now() + KST_MS).toISOString().slice(0, 7), y = nowYm.slice(0, 4);
+    var last = all.reduce(function (a, o) { return o.ym > a ? o.ym : a; }, nowYm);
+    var months = kxYm(KX_FROM, last.slice(0, 4) + '-12' > y + '-12' ? last : y + '-12');
+    var curM = KX.month.webm && months.indexOf(KX.month.webm) >= 0 ? KX.month.webm : nowYm; KX.month.webm = curM;
+    var by = {}; months.forEach(function (m) { by[m] = { n: 0, in: 0, ex: 0, deep: 0, sv: {}, nonac: 0 }; });
+    rows.forEach(function (o) { var b = by[o.ym]; if (!b) return; b.n++; if (o.io === '내부') b.in++; else if (o.io === '외부') b.ex++; if (kxDeep(o.sv)) { b.deep++; b.sv[o.sv] = (b.sv[o.sv] || 0) + 1; } if (kxNonAc(o)) b.nonac++; });
+    var cy = curM.slice(0, 4), cmI = +curM.slice(5, 7), ytd = { n: 0, in: 0, ex: 0, deep: 0, nonac: 0 }, ytdP = { n: 0, in: 0, ex: 0, deep: 0 };
+    months.forEach(function (m) { var mm = +m.slice(5, 7), b = by[m]; if (mm > cmI) return; var t = m.slice(0, 4) === cy ? ytd : m.slice(0, 4) === String(+cy - 1) ? ytdP : null; if (t) ['n', 'in', 'ex', 'deep'].forEach(function (k) { t[k] += b[k]; }); });
+    var b = by[curM] || { n: 0, in: 0, ex: 0, deep: 0 }, pb = by[kxPrevYm(curM, 12)];
+    var vsP = function (a, p) { return p ? ' · 전년 ' + kxDelta(kxPct(a - p, p), '%', 1) : ''; };
+    var kp = [
+      kxCard('전체 운영건수', fmt(b.n), '건', kxYmLabel(curM) + (pb ? vsP(b.n, pb.n) : '') + '<br>누계 ' + fmt(ytd.n) + '건' + vsP(ytd.n, ytdP.n)),
+      kxCard('내부 운영건수', fmt(b.in), '건', '누계 ' + fmt(ytd.in) + '건' + vsP(ytd.in, ytdP.in)),
+      kxCard('외부 운영건수', fmt(b.ex), '건', '누계 ' + fmt(ytd.ex) + '건' + vsP(ytd.ex, ytdP.ex)),
+      kxCard('심화설문 진행', fmt(b.deep), '건', (b.n ? '운영건수 대비 ' + (b.deep / b.n * 100).toFixed(1) + '%' : '') + '<br>누계 ' + fmt(ytd.deep) + '건')
+    ].join('');
+    var opt = function (map, cur, lbl) { return '<option value="all">' + lbl + '</option>' + Object.keys(map).sort(function (a, c) { return map[c] - map[a]; }).map(function (k) { return '<option value="' + esc(k) + '"' + (k === cur ? ' selected' : '') + '>' + esc(k) + ' (' + map[k] + ')</option>'; }).join(''); };
+    var svTypes = {}; months.forEach(function (m) { for (var k in by[m].sv) svTypes[k] = (svTypes[k] || 0) + by[m].sv[k]; });
+    var svK = Object.keys(svTypes).sort(function (a, c) { return svTypes[c] - svTypes[a]; });
+    var tm = months.filter(function (m) { return m <= (last > nowYm ? last : nowYm); }).reverse();
+    var td = function (m, v, extra) { return '<td' + (m === curM ? ' class="cur"' : '') + '>' + v + (extra || '') + '</td>'; };
+    var tbl = '<table class="mc-t kx-t"><thead><tr><th>구분</th>' + tm.map(function (m) { return '<th' + (m === curM ? ' class="cur"' : '') + '>' + m.slice(2, 4) + '.' + m.slice(5, 7) + (m > nowYm ? '<small>예정</small>' : '') + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      '<tr class="sum"><td>전체 운영건수</td>' + tm.map(function (m) { return td(m, fmt(by[m].n)); }).join('') + '</tr>' +
+      '<tr><td>심화설문 (합계)</td>' + tm.map(function (m) { var x = by[m]; return td(m, fmt(x.deep), x.n ? '<small>' + (x.deep / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr>' +
+      svK.map(function (k) { return '<tr class="sub"><td>· ' + esc(k) + '</td>' + tm.map(function (m) { var x = by[m], v = x.sv[k] || 0; return td(m, v ? fmt(v) : '–', v && x.n ? '<small>' + (v / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr>'; }).join('') +
+      '<tr><td>비학술강의</td>' + tm.map(function (m) { var x = by[m]; return td(m, fmt(x.nonac), x.n ? '<small>' + (x.nonac / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr></tbody></table>';
+    box.innerHTML = rev +
+      '<div class="mc-ctl kx-f"><label>기준 월 <select id="kxWm">' + months.slice().reverse().map(function (m) { return '<option value="' + m + '"' + (m === curM ? ' selected' : '') + '>' + kxYmLabel(m) + (m > nowYm ? ' (예정)' : '') + '</option>'; }).join('') + '</select></label>' +
+        '<label>유형 <select id="kxWt"><option value="all">웹심포지엄 + 라이브세미나</option>' + KX_WTYPES.map(function (t) { return '<option' + (F.type === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></label>' +
+        '<label>카테고리 <select id="kxWc">' + opt(cats, F.cat, '전체 카테고리') + '</select></label>' +
+        '<label>회사 <select id="kxWco">' + opt(cos, F.co, '전체 회사') + '</select></label>' +
+        '<span class="mc-note">편성표 RAW 탭 · 사전녹화·취소 제외 · 필터는 건수(카드·그래프·표)에 적용 · 매출은 매출 시트 기준</span></div>' +
+      '<section><div class="kpis">' + kp + '</div></section>' +
+      '<section><div class="grid2">' +
+        '<div class="card"><h3>월별 운영건수 (내부·외부)</h3><ul class="legend" id="kxWLg1"></ul><div class="chart" id="kxW1"></div></div>' +
+        '<div class="card"><h3>월별 집행 금액 (내부·외부)</h3><p class="desc">매출 마감 시트 「웨비나(라이브세미나)」 · 마감 전 달은 비어 있음</p><ul class="legend" id="kxWLg2"></ul><div class="chart" id="kxW2"></div></div>' +
+      '</div></section>' +
+      '<section><div class="sec-head"><div><h2>월별 운영건수 대비 심화설문·비학술강의</h2><p>심화설문 = 설문유형에 「심화」 포함 · 비학술 = 학술구분 「비학술」 · 작은 글씨 = 운영건수 대비 비율</p></div></div><div class="card mc-tw">' + tbl + '</div></section>' +
+      '<section id="kxNaSec"></section>';
+    $('#kxWm').onchange = function () { KX.month.webm = this.value; renderKx(); };
+    $('#kxWt').onchange = function () { F.type = this.value; renderKx(); };
+    $('#kxWc').onchange = function () { F.cat = this.value; renderKx(); };
+    $('#kxWco').onchange = function () { F.co = this.value; renderKx(); };
+    var cm = months.filter(function (m) { return m <= (last > nowYm ? last : nowYm); }), lab = kxLab(cm), ttl = function (i) { return kxYmLabel(cm[i]) + (cm[i] > nowYm ? ' (예정)' : ''); };
+    var s1 = [{ name: '내부', color: css('--s1'), vals: cm.map(function (m) { return by[m].in; }) }, { name: '외부', color: css('--s3'), vals: cm.map(function (m) { return by[m].ex; }) }];
+    var other = cm.map(function (m) { return by[m].n - by[m].in - by[m].ex; });
+    if (other.some(function (v) { return v > 0; })) s1.push({ name: '구분 미기재', color: css('--axis'), op: 0.6, vals: other });
+    $('#kxWLg1').innerHTML = kxLegend(s1);
+    kxBars($('#kxW1'), lab, s1, { title: ttl, fmtV: function (v) { return fmt(v) + '건'; }, fmtY: function (v) { return fmt(Math.round(v)); }, label: '월별 운영건수' });
+    var S = kxSales();
+    if (S && !S.err) {
+      var a = kxSalesSeries(S, '내부', ['웨비나']), e = kxSalesSeries(S, '외부', ['웨비나']), t = kxSalesSeries(S, '전체', ['웨비나']);
+      var s2 = [{ name: '내부', color: css('--s1'), vals: a.act.map(function (v) { return v || 0; }) }, { name: '외부', color: css('--s3'), vals: e.act.map(function (v) { return v || 0; }) }];
+      $('#kxWLg2').innerHTML = kxLegend(s2.concat(t.tgt.some(function (v) { return v; }) ? [{ name: '월 목표', color: css('--down'), line: true }] : []));
+      kxBars($('#kxW2'), kxLab(a.ym), s2, { title: function (i) { return kxYmLabel(a.ym[i]); }, fmtV: kxEok, fmtY: function (v) { return (Math.round(v * 10) / 10) + '억'; }, label: '월별 집행 금액',
+        line: t.tgt.some(function (v) { return v; }) ? { name: '월 목표', color: css('--down'), vals: t.tgt, skip0: true } : null });
+    } else $('#kxW2').innerHTML = '<p class="empty">' + (S && S.err ? esc(S.err) : '매출 시트를 불러오는 중…') + '</p>';
+    renderKxNa($('#kxNaSec'), all, cy);
+  }
+
+  // ---- 비학술세미나 목표·니즈 관리 (DB datasets 'kx|nonacad', 내부 계정만) --------------------
+  function kxLoadNa() {
+    if (KX.naBusy || KX.na || !DB.on || !INTERNAL) return Promise.resolve();
+    KX.naBusy = true;
+    return dbGet('kx|nonacad').then(function (r) { KX.na = (r && r.data) || { targets: {}, needs: [] }; KX.naErr = ''; }, function (e) { KX.naErr = 'DB를 읽지 못했습니다: ' + (e.message || e); KX.na = { targets: {}, needs: [] }; })
+      .then(function () { KX.naBusy = false; kxAfter(); });
+  }
+  function kxSaveNa(msg) {
+    KX.na.updatedAt = new Date().toISOString(); KX.na.updatedBy = USER ? USER.name : '';
+    return dbPut('kx|nonacad', KX.na, 'internal', 'dashboard').then(function (ok) { toast(ok ? msg : (DB.err || '저장하지 못했습니다.'), !ok); });
+  }
+  function renderKxNa(sec, all, y) {
+    if (!sec) return;
+    if (!DB.on) { sec.innerHTML = '<div class="sec-head"><div><h2>비학술세미나 목표 · 니즈</h2></div></div><p class="empty">DB 로그인 상태에서만 사용할 수 있습니다.</p>'; return; }
+    if (!KX.na) { sec.innerHTML = '<div class="sec-head"><div><h2>비학술세미나 목표 · 니즈</h2></div></div><p class="empty">불러오는 중…</p>'; return; }
+    var N = KX.na, T = N.targets || (N.targets = {}), needs = N.needs || (N.needs = []);
+    var act = {}; all.forEach(function (o) { if (kxNonAc(o) && o.ym.slice(0, 4) === y) act[o.ym] = (act[o.ym] || 0) + 1; });
+    var ms = kxYm(y + '-01', y + '-12'), tt = 0, ta = 0;
+    var cells = ms.map(function (m) { var t = +T[m] || 0, a = act[m] || 0; tt += t; ta += a; return '<td><input type="number" min="0" class="kx-na-t" data-m="' + m + '" value="' + (T[m] != null && T[m] !== '' ? T[m] : '') + '" aria-label="' + kxYmLabel(m) + ' 목표"></td>'; }).join('');
+    var acts = ms.map(function (m) { var t = +T[m] || 0, a = act[m] || 0; return '<td>' + fmt(a) + (t ? '<small class="' + (a >= t ? 'up' : 'down') + '">' + Math.round(a / t * 100) + '%</small>' : '') + '</td>'; }).join('');
+    var ST = ['접수', '검토', '진행', '완료', '보류'];
+    var list = needs.slice().sort(function (a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; }).map(function (r) {
+      return '<tr data-id="' + esc(r.id) + '"><td>' + esc(r.date || '') + '</td><td>' + esc(r.co || '') + '</td><td>' + esc(r.cat || '') + '</td><td class="l">' + esc(r.topic || '') + '</td><td>' + esc(r.month || '') + '</td>' +
+        '<td><select class="kx-na-st">' + ST.map(function (s) { return '<option' + (r.st === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select></td><td class="l">' + esc(r.note || '') + '</td><td><button type="button" class="btn kx-na-del">삭제</button></td></tr>';
+    }).join('');
+    sec.innerHTML = '<div class="sec-head"><div><h2>비학술세미나 목표 · 니즈</h2><p>목표는 월별 건수를 입력 후 [목표 저장] · 실적 = 편성표 학술구분 「비학술」 건수(필터 무관) · 대시보드 DB에 저장되며 내부 계정만 보고 수정합니다' + (N.updatedAt ? ' · 마지막 저장 ' + new Date(N.updatedAt).toLocaleString('ko-KR', { hour12: false }) + (N.updatedBy ? ' (' + esc(N.updatedBy) + ')' : '') : '') + '</p></div></div>' +
+      (KX.naErr ? '<p class="anote warn">' + esc(KX.naErr) + '</p>' : '') +
+      '<div class="card mc-tw"><table class="mc-t kx-t kx-na"><thead><tr><th>' + y + '년</th>' + ms.map(function (m) { return '<th>' + (+m.slice(5, 7)) + '월</th>'; }).join('') + '<th>합계</th></tr></thead><tbody>' +
+        '<tr><td>목표 (건)</td>' + cells + '<td><b>' + fmt(tt) + '</b></td></tr><tr class="sum"><td>실적 (건)</td>' + acts + '<td>' + fmt(ta) + (tt ? '<small>' + Math.round(ta / tt * 100) + '%</small>' : '') + '</td></tr></tbody></table>' +
+        '<div class="kx-na-bar"><button type="button" class="btn primary" id="kxNaSaveT">목표 저장</button></div></div>' +
+      '<div class="card" style="margin-top:12px"><h3>니즈 목록</h3><form class="kx-na-form" id="kxNaForm">' +
+        '<input name="co" placeholder="회사" required maxlength="60"><input name="cat" placeholder="카테고리" maxlength="40"><input name="topic" placeholder="니즈 · 희망 주제" required maxlength="200" class="w">' +
+        '<input name="month" type="month" title="희망 시기"><select name="st">' + ST.map(function (s) { return '<option>' + s + '</option>'; }).join('') + '</select><input name="note" placeholder="메모" maxlength="200" class="w"><button type="submit" class="btn primary">추가</button></form>' +
+        '<div class="mc-tw"><table class="mc-t kx-t kx-nl"><thead><tr><th>등록일</th><th>회사</th><th>카테고리</th><th>니즈 · 주제</th><th>희망 시기</th><th>상태</th><th>메모</th><th></th></tr></thead><tbody>' + (list || '<tr><td colspan="8" class="l" style="color:var(--muted)">등록된 니즈가 없습니다.</td></tr>') + '</tbody></table></div></div>';
+    $('#kxNaSaveT').onclick = function () {
+      sec.querySelectorAll('.kx-na-t').forEach(function (inp) { var v = inp.value.trim(); if (v === '') delete T[inp.dataset.m]; else T[inp.dataset.m] = Math.max(0, Math.round(+v || 0)); });
+      kxSaveNa('비학술세미나 목표를 저장했습니다.').then(renderKx);
+    };
+    $('#kxNaForm').onsubmit = function (ev) {
+      ev.preventDefault(); var f = ev.target, g = function (n) { return String(f.elements[n].value || '').trim(); };
+      needs.push({ id: 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date: new Date(Date.now() + KST_MS).toISOString().slice(0, 10), co: g('co'), cat: g('cat'), topic: g('topic'), month: g('month'), st: g('st'), note: g('note'), by: USER ? USER.name : '' });
+      kxSaveNa('니즈를 추가했습니다.').then(renderKx);
+    };
+    sec.querySelectorAll('.kx-na-st').forEach(function (s) { s.onchange = function () { var id = s.closest('tr').dataset.id, r = needs.filter(function (x) { return x.id === id; })[0]; if (r) { r.st = s.value; kxSaveNa('상태를 바꿨습니다.'); } }; });
+    sec.querySelectorAll('.kx-na-del').forEach(function (bn) { bn.onclick = function () { var id = bn.closest('tr').dataset.id; N.needs = needs.filter(function (x) { return x.id !== id; }); kxSaveNa('니즈를 삭제했습니다.').then(renderKx); }; });
+  }
+
+  // ---- ③ 컨퍼런스빌 (현황 > 컨퍼런스) ----------------------------------------------------
+  function renderKxConf(box) {
+    var rev = kxRevHtml('컨퍼런스빌', ['컨퍼런스빌'], 'conf');
+    var S = kxSales();
+    if (!S || S.err || !SL.data.years) { box.innerHTML = rev; return; }
+    var Y = SL.data.years, y = S.y, yp = S.yp, m = KX.month.conf || S.done, i = m - 1;
+    var raw = function (yr) { return ((Y[yr] && Y[yr].rows) || []).filter(function (r) { return r.cat === '컨퍼런스빌'; }); };
+    var R = raw(y), Rp = raw(yp);
+    var cnt = function (rows, io, k) { return rows.filter(function (r) { return (io === '전체' || r.io === io) && r.m[k] > 0; }).length; };
+    var cntY = function (rows, io, k) { var t = 0; for (var q = 0; q <= k; q++) t += cnt(rows, io, q); return t; };
+    var kp = ['전체', '내부', '외부'].map(function (io) {
+      var a = cnt(R, io, i), b = cntY(R, io, i), ap = cnt(Rp, io, i), bp = cntY(Rp, io, i);
+      return kxCard(io + ' 운영건수', fmt(a), '건', m + '월 · 전년동월 ' + fmt(ap) + '건<br>누계 ' + fmt(b) + '건' + (bp ? ' · 전년동기 ' + kxDelta(kxPct(b - bp, bp), '%', 1) : ''));
+    }).join('');
+    var ann = function (rows, k) {   // 그 달 매출이 큰 행사(고객사) — 3천만 원 이상 상위 2곳
+      return rows.filter(function (r) { return r.m[k] >= 3e7; }).sort(function (a, b) { return b.m[k] - a.m[k]; }).slice(0, 2).map(function (r) { return slxShort ? slxShort(r.c) : r.c; });
+    };
+    box.innerHTML = rev +
+      '<section><div class="kpis kx-k3">' + kp + '</div><p class="mc-note">운영건수 = 매출 마감 시트 raw (세부)에서 그 달 컨퍼런스빌 금액이 있는 고객사(행사) 수</p></section>' +
+      '<section><div class="card"><h3>목표 대비 월별 매출 (' + y + '년)</h3><p class="desc">막대 = 내부·외부 실적 · 점선 = 월 목표 · 막대 위 = 매출 3천만 원 이상 행사(상위 2곳)</p><ul class="legend" id="kxCLg1"></ul><div class="chart kx-tall" id="kxC1"></div></div></section>' +
+      '<section><div class="card"><h3>전년동기 대비 월별 매출</h3><p class="desc">막대 = ' + y + '년 내부·외부 · 점선 = ' + yp + '년 같은 달 합계 · 막대 위 = 매출 3천만 원 이상 행사</p><ul class="legend" id="kxCLg2"></ul><div class="chart kx-tall" id="kxC2"></div></div></section>';
+    var di = S.get('내부', ['컨퍼런스빌']), de = S.get('외부', ['컨퍼런스빌']), dt = S.get('전체', ['컨퍼런스빌']);
+    var lab = [], cut = function (a) { return a.map(function (v, k) { return k < S.done ? v : 0; }); };
+    for (var k = 1; k <= 12; k++) lab.push(k + '월');
+    var st = [{ name: '내부', color: css('--s1'), vals: cut(di.mo) }, { name: '외부', color: css('--s3'), vals: cut(de.mo) }];
+    $('#kxCLg1').innerHTML = kxLegend(st.concat(dt.mt ? [{ name: '월 목표', color: css('--down'), line: true }] : []));
+    var fE = function (v) { return kxEok(v); }, fY = function (v) { return (Math.round(v * 10) / 10) + '억'; };
+    kxBars($('#kxC1'), lab, st, { h: 280, title: function (k) { return y + '년 ' + (k + 1) + '월'; }, fmtV: fE, fmtY: fY, label: '목표 대비 월별 매출',
+      line: dt.mt ? { name: '월 목표', color: css('--down'), vals: dt.mt, skip0: true } : null, ann: function (k) { return k < S.done ? ann(R, k) : []; },
+      extra: function (k) { return [{ k: '목표 대비', v: dt.mt && dt.mt[k] ? kxRate(dt.mo[k], dt.mt[k]) : '목표 없음' }, { k: '운영건수', v: cnt(R, '전체', k) + '건' }]; } });
+    $('#kxCLg2').innerHTML = kxLegend(st.concat([{ name: yp + '년 합계', color: css('--muted'), line: true }]));
+    kxBars($('#kxC2'), lab, st, { h: 280, title: function (k) { return (k + 1) + '월'; }, fmtV: fE, fmtY: fY, label: '전년동기 대비 월별 매출',
+      line: { name: yp + '년', color: css('--muted'), vals: dt.mp }, ann: function (k) { return k < S.done ? ann(R, k) : []; },
+      extra: function (k) { return [{ k: '전년동월 대비', v: dt.mp[k] ? kxRate(dt.mo[k], dt.mp[k]) : '–' }, { k: yp + '년 행사', v: ann(Rp, k).join(', ') || '–' }]; } });
+  }
+
+  // ---- ④ 광고 -------------------------------------------------------------------------
+  function renderKxAds(box) {
+    var rev = kxRevHtml('광고', ['광고'], 'ad');
+    var d = AD.data && adMerge(AD.data), S = kxSales();
+    var area = '';
+    if (d && d.agg) {
+      var y = String((S && !S.err && S.y) || new Date(Date.now() + KST_MS).getUTCFullYear()), A = d.agg[y] && d.agg[y].exec;
+      var m = KX.month.ad || (S && S.done) || 12, o = A && A.months[m - 1], cap = d.cap;
+      if (o) {
+        var u = function (lbl, amt, max, n, slots) {
+          return '<div class="card kr"><div class="kr-h">' + lbl + ' 영역 · ' + m + '월 (실행월)</div><div class="kr-b">' +
+            '<div class="kr-c"><div class="kr-l">확정 금액 / 최대 금액</div><div class="kr-v">' + kxRate(amt, max) + '</div><div class="kr-r"><span>' + adEok(amt) + '억 / ' + adEok(max) + '억</span></div></div>' +
+            '<div class="kr-c"><div class="kr-l">칸 수 가동률</div><div class="kr-v">' + kxRate(n, slots) + '</div><div class="kr-r"><span>' + fmt(n) + '칸 / 유상 ' + fmt(slots) + '칸</span></div></div></div></div>';
+        };
+        area = '<div class="kx-rev"><div class="kx-rh"><h3>광고 영역별 가동률</h3><span class="kx-note">광고 현황판 통합_Raw 확정 건 · 최대 금액·유상 칸 수는 현황판 기준 (메인 ' + adEok(cap.main.max) + '억·' + cap.main.n + '칸 / 서브 ' + adEok(cap.sub.max) + '억·' + cap.sub.n + '칸)</span></div><div class="kx-rg kx-rg2">' +
+          u('메인', o.aMain, cap.main.max, o.nMain, cap.main.n) + u('서브', o.aSub, cap.sub.max, o.nSub, cap.sub.n) + '</div></div>';
+      }
+    } else area = '<p class="empty">' + (AD.loading ? '광고 현황판을 불러오는 중…' : (AD.err || '광고 현황판 데이터가 없습니다. [광고 현황판] 탭에서 불러와 주세요.')) + '</p>';
+    box.innerHTML = rev + area +
+      '<section><div class="card"><h3>내부 · 외부 월별 목표 대비 현황</h3><p class="desc">실선 = 실적 · 점선 = 목표 (매출 마감 시트 「광고」) · 전년도는 실적만</p><ul class="legend" id="kxALg"></ul><div class="chart kx-tall" id="kxA1"></div></div></section>';
+    if (S && !S.err) {
+      var a = kxSalesSeries(S, '내부', ['광고']), e = kxSalesSeries(S, '외부', ['광고']);
+      var ser = [{ name: '내부 실적', color: css('--s1'), vals: a.act }, { name: '내부 목표', color: css('--s1'), dash: '5 4', vals: a.tgt }, { name: '외부 실적', color: css('--s3'), vals: e.act }, { name: '외부 목표', color: css('--s3'), dash: '5 4', vals: e.tgt }];
+      $('#kxALg').innerHTML = ser.map(function (s) { return '<li><i class="line" style="background:' + s.color + (s.dash ? ';opacity:.55' : '') + '"></i>' + esc(s.name) + '</li>'; }).join('');
+      aLineChart($('#kxA1'), kxLab(a.ym), ser, { zero: true, title: function (i) { return kxYmLabel(a.ym[i]); }, fmtV: kxEok, fmtY: function (v) { return (Math.round(v * 10) / 10) + '억'; }, label: '광고 내부 외부 목표 대비' });
+    } else $('#kxA1').innerHTML = '<p class="empty">' + (S && S.err ? esc(S.err) : '매출 시트를 불러오는 중…') + '</p>';
+  }
+
   // ---- 좌측 메뉴 · 화면 전환 ------------------------------------------------
   // 홈 / 매출(닥터빌·팜빌 포인트) / 회원 지표(닥터빌·팜빌 회원 정보·활동성) / 분석 리포트·LLM(준비 중)
   var VIEWS = ['home', 'members', 'pharm', 'sales', 'points', 'ppoints', 'seminar', 'ads', 'sched', 'sads', 'conf', 'activity', 'wact', 'pactivity', 'report', 'llm', 'accounts'];
@@ -6017,7 +6473,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
         var sub = b.closest('.nav-sub'); if (sub && sub.previousElementSibling) sub.previousElementSibling.setAttribute('aria-expanded', 'true');
       } else b.removeAttribute('aria-current');
     });
-    setNav(false); dbBadge(); if (mcOn()) renderMc(); else mcTabs();
+    setNav(false); dbBadge(); if (mcOn()) renderMc(); else mcTabs(); kxSync();
     $('#refreshBtn').title = isPts() ? '담당 PC의 포인트 갱신 서버에서 닥터빌·팜빌 신규 CSV만 적재·집계합니다' : VIEW === 'activity' ? '활동성 시트의 최신 값을 다시 불러옵니다' : VIEW === 'pactivity' ? '저장소의 팜빌 활동성 파일을 다시 읽어 DB에 저장합니다 (시트 최신화는 Claude에 요청)' : VIEW === 'sales' ? '매출 시트의 최신 값을 다시 불러옵니다' : VIEW === 'ads' ? '광고 현황판 통합_Raw를 다시 집계해 DB에 저장합니다 (추가·변경 건수 안내)' : VIEW === 'sched' ? '편성표에서 이번 달 세미나를 다시 불러옵니다 (대시보드에서 수정한 건은 유지)' : VIEW === 'conf' ? 'DB의 등록 행사와 구글 캘린더(닥터빌 마케팅팀) 일정을 다시 불러옵니다' : VIEW === 'seminar' ? '저장소의 세미나 편성 파일을 다시 읽어 DB에 저장합니다 (편성표 최신화는 Claude에 「세미나 편성 갱신」 요청)' : '구글시트의 최신 값을 불러와 다시 집계합니다';
     if (!fromHash) { try { history.replaceState(null, '', VIEW === 'home' ? location.pathname + location.search : '#' + VIEW); } catch (e) {} }
     if (stat) {
@@ -6933,6 +7389,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
   // ---- 렌더링 ------------------------------------------------------------
   function renderPoints() {
+    if (VIEW === 'points') setTimeout(kxAfter, 0);
     if (!isPts()) { if (VIEW === 'home' || VIEW === 'report') renderHome(); return; }
     var has = !!P.data;
     $('#pEmpty').hidden = has;
