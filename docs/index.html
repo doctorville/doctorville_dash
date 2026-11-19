@@ -714,6 +714,23 @@ th.sort.on { color: var(--accent); }
 .nav-svc ~ .nav-item::before { content: ""; position: absolute; left: 13px; top: 50%; width: 5px; height: 1px; background: var(--axis); }
 .nav-sub .nav-item[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 .nav-sub .nav-item[aria-current="page"]::after { content: ""; position: absolute; left: -11px; top: 5px; bottom: 5px; width: 2px; border-radius: 2px; background: var(--accent); }
+/* 회원 지표 > 회원 수 탭 (2026-11-19) */
+#mTabs[hidden], #mcx { display: none; }
+body.mc-on #mcx { display: block; }
+body.mc-on #app > section, body.mc-on #memberFoot, body.mc-on .member-only, body.mc-on #pdfBtn { display: none !important; }
+.mc-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 14px; font-size: 13px; }
+.mc-ctl select { font: inherit; padding: 5px 8px; border: 1px solid var(--axis); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.mc-note { font-size: 11.5px; color: var(--muted); }
+.mc-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .mc-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .mc-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.mc-tw { overflow-x: auto; padding: 0; }
+.mc-t { border-collapse: collapse; font-size: 12.5px; width: 100%; font-variant-numeric: tabular-nums; }
+.mc-t th, .mc-t td { padding: 7px 9px; border-bottom: 1px solid var(--grid); text-align: right; white-space: nowrap; }
+.mc-t th:first-child, .mc-t td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); z-index: 1; }
+.mc-t th { color: var(--muted); font-weight: 500; font-size: 11.5px; }
+.mc-t .cur { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.mc-t tr.sum td { font-weight: 700; border-top: 1px solid var(--axis); }
 /* 현황: 달력 */
 #schedMain, #sadsMain, #confMain { display: none; }
 body.view-sched #schedMain, body.view-sads #sadsMain, body.view-conf #confMain { display: block; }
@@ -1464,6 +1481,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="memberMain">
   <div class="wrap" id="app">
+    <div class="sl-tabs" id="mTabs" role="tablist" aria-label="회원 화면" hidden></div>
+    <div id="mcx"></div>
     <section>
       <div class="kpis" id="kpis"></div>
     </section>
@@ -2617,6 +2636,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     (PW ? Promise.resolve(PW) : askPw()).then(function (pw) {
       if (!pw) return;
       PW = pw; btn.disabled = true; btn.textContent = '갱신 중…'; $('#app').classList.add('loading');
+      if (mcOn()) mcLoadAct(true);
       return api('refresh').then(function (res) {
         applyRemote(res);
         if (!res.snap.monthlySeries) toast('갱신은 완료됐지만 월간 집계가 빠져 있습니다. ' + OLD_GS_MSG, true, 15000);
@@ -2916,6 +2936,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     if (VIEW === 'sched') renderSchedule();
     if (VIEW === 'conf') renderConf();
     if (VIEW === 'home' || VIEW === 'report') renderHome();
+    if (VIEW === 'members') renderMc(); else mcTabs();
   }
 
   // ---- PDF 내려받기 (브라우저 안에서 생성, 서버 전송 없음) ----------------
@@ -5819,6 +5840,147 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   $('#llmQ').addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); llmAsk(this.value); } });
   $('#llmNew').addEventListener('click', function () { if (LLM.busy) return; LLM.turns = []; renderLlm(); $('#llmQ').focus(); });
 
+  // ---- KPI 확장 공통 (2026-11-19, 화면별 KPI 요청) --------------------------------
+  //   kxBars: 누적 막대(+선택: 목표선·막대 위 라벨·주석) / kxYm: 'YYYY-MM' 목록 / KX_FROM: 표·그래프 시작 월(전년도 1월)
+  var KX_FROM = (new Date().getFullYear() - 1) + '-01';
+  function kxYm(from, to) { var out = [], y = +from.slice(0, 4), m = +from.slice(5, 7); while (true) { var k = y + '-' + (m < 10 ? '0' : '') + m; if (k > to) break; out.push(k); if (++m > 12) { m = 1; y++; } } return out; }
+  function kxPrevYm(k, n) { var y = +k.slice(0, 4), m = +k.slice(5, 7) - (n || 1); while (m < 1) { m += 12; y--; } return y + '-' + (m < 10 ? '0' : '') + m; }
+  function kxPct(a, b) { return b ? a / b * 100 : null; }
+  function kxDelta(d, unit, digits) { return d == null || !isFinite(d) ? '<span class="delta flat">–</span>' : deltaHtml(d, unit, digits); }
+  function kxCard(label, value, unit, meta) { return '<div class="card kpi"><div class="label">' + label + '</div><div class="value">' + value + '<small>' + (unit || '') + '</small></div><div class="meta">' + (meta || '') + '</div></div>'; }
+  // stacks: [{name, color, vals[]}] 아래에서 위로 / opts: {fmtY, fmtV, title(i), top(i)→문자열, line:{name,color,vals,dash}, ann(i)→[문자열], h}
+  function kxBars(host, labels, stacks, opts) {
+    opts = opts || {};
+    var n = labels.length, tot = labels.map(function (_, i) { return stacks.reduce(function (s, st) { return s + (+st.vals[i] || 0); }, 0); });
+    var mx = Math.max.apply(null, tot.concat(opts.line ? opts.line.vals.map(function (v) { return +v || 0; }) : [0]));
+    if (!(mx > 0)) { host.innerHTML = '<p class="empty">데이터가 없습니다.</p>'; return; }
+    var f = frame(host, { min: 0, max: axTop(mx), h: opts.h || 240, ml: opts.ml || 52, fmtY: opts.fmtY, label: opts.label || '' });
+    var step = f.iw / n, bw = Math.max(4, Math.min(34, step * 0.62)), xOf = function (i) { return f.m.l + step * (i + 0.5); }, y0 = f.y(0);
+    for (var i = 0; i < n; i++) {
+      var acc = 0;
+      stacks.forEach(function (st, k) {
+        var v = +st.vals[i] || 0; if (v <= 0) return;
+        var ya = f.y(acc), yb = f.y(acc + v); acc += v;
+        var top = !stacks.slice(k + 1).some(function (s2) { return (+s2.vals[i] || 0) > 0; });
+        if (top) el('path', { d: barPath(xOf(i) - bw / 2, ya, bw, yb), fill: st.color, opacity: st.op || 1 }, f.svg);
+        else el('rect', { x: xOf(i) - bw / 2, y: yb, width: bw, height: Math.max(0, ya - yb), fill: st.color, opacity: st.op || 1 }, f.svg);
+      });
+      var tl = opts.top ? opts.top(i) : '';
+      if (tl && tot[i] > 0 && (step >= 30 || (step >= 15 && (n - 1 - i) % 2 === 0))) { var tt = el('text', { x: xOf(i), y: f.y(tot[i]) - 5, 'text-anchor': 'middle', 'font-size': step >= 30 ? 10.5 : 9.5, fill: css('--ink-2') }, f.svg); tt.textContent = tl; }
+      var an = opts.ann ? opts.ann(i) : null;
+      if (an && an.length && tot[i] > 0) an.slice(0, 3).forEach(function (s, j) {
+        var ta = el('text', { x: xOf(i), y: f.y(tot[i]) - 18 - j * 12, 'text-anchor': 'middle', 'font-size': 9.5, fill: css('--s2'), 'font-weight': 600 }, f.svg); ta.textContent = s;
+      });
+    }
+    if (opts.line) {
+      var d = '', pen = false;
+      opts.line.vals.forEach(function (v, i) { if (v == null || isNaN(v) || (opts.line.skip0 && !v)) { pen = false; return; } d += (pen ? 'L' : 'M') + xOf(i) + ',' + f.y(+v); pen = true; });
+      el('path', { d: d, fill: 'none', stroke: opts.line.color, 'stroke-width': 2, 'stroke-dasharray': opts.line.dash || '5 4' }, f.svg);
+      opts.line.vals.forEach(function (v, i) { if (v != null && !isNaN(v) && !(opts.line.skip0 && !v)) el('circle', { cx: xOf(i), cy: f.y(+v), r: 2.6, fill: opts.line.color }, f.svg); });
+    }
+    el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: y0, y2: y0, stroke: css('--axis') }, f.svg);
+    xLabels(f, labels, xOf);
+    hoverCols(f, n, xOf, step, function (i) {
+      var rows = stacks.slice().reverse().map(function (s) { return { k: s.name, v: opts.fmtV(+s.vals[i] || 0), color: s.color }; });
+      if (stacks.length > 1) rows.push({ k: '합계', v: opts.fmtV(tot[i]) });
+      if (opts.line) rows.push({ k: opts.line.name, v: opts.line.vals[i] == null ? '–' : opts.fmtV(+opts.line.vals[i]), color: opts.line.color });
+      (opts.extra ? opts.extra(i) : []).forEach(function (r) { rows.push(r); });
+      return tipRows(opts.title ? opts.title(i) : labels[i], rows);
+    });
+  }
+  function kxLegend(items) { return items.map(function (s) { return '<li><i class="' + (s.line ? 'line' : 'sq') + '" style="background:' + s.color + '"></i>' + esc(s.name) + '</li>'; }).join(''); }
+  function kxYmLabel(k) { return k.slice(0, 4) + '년 ' + (+k.slice(5, 7)) + '월'; }
+
+  // ---- 회원 지표 > 닥터빌 회원 정보: 상단 탭 [회원 정보]·[회원 수] ----------------------------
+  //   회원 수·신규: 회원 집계 monthlySeries(가입일 기준, 현재 회원 명단으로 계산 → 탈퇴 회원 제외)
+  //   MAU: 활동성 시트 월간지표(기기 '전체') — 화면을 열 때 활동성 저장본(api activity)을 함께 불러옴
+  var MC = { tab: 'info', month: null, aBusy: false, aErr: '' };
+  try { if (localStorage.getItem('mv-mem-tab') === 'count') MC.tab = 'count'; } catch (e) {}
+  function mcOn() { return VIEW === 'members' && SVC === 'dv' && MC.tab === 'count'; }
+  function mcTabs() {
+    var box = $('#mTabs'); if (!box) return;
+    var show = VIEW === 'members' && SVC === 'dv';
+    box.hidden = !show;
+    document.body.classList.toggle('mc-on', mcOn());
+    if (!show) return;
+    box.innerHTML = [['info', '회원 정보'], ['count', '회원 수']].map(function (t) { return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + (MC.tab === t[0]) + '">' + t[1] + '</button>'; }).join('');
+    box.querySelectorAll('button').forEach(function (b) {
+      b.onclick = function () { MC.tab = b.dataset.tab; try { localStorage.setItem('mv-mem-tab', MC.tab); } catch (e) {} mcTabs(); if (MC.tab === 'count') renderMc(); else if (state.snap) renderAll(); };
+    });
+  }
+  function mcLoadAct(fresh) {
+    if (MC.aBusy || (A.data && !fresh)) return Promise.resolve();
+    if (!CONFIG.appsScriptUrl || !(PW || DB.on)) { MC.aErr = 'MAU는 활동성 데이터가 필요합니다. 닥터빌 활동성 메뉴에서 먼저 불러와 주세요.'; return Promise.resolve(); }
+    MC.aBusy = true; MC.aErr = '';
+    return api('activity', fresh ? { fresh: true } : {}).then(function (res) { if (res.activity) { A.data = res.activity; A.period = null; } else MC.aErr = '활동성 데이터를 불러오지 못했습니다.'; })
+      .catch(function (e) { MC.aErr = (e && e.code ? apiErrorText(e) : '') || '활동성 데이터를 불러오지 못했습니다.'; })
+      .then(function () { MC.aBusy = false; if (mcOn()) renderMc(); });
+  }
+  function mcMau() {   // {'YYYY-MM': MAU}
+    var o = {}; if (!A.data || !A.data.monthly) return o;
+    aTable(A.data.monthly).forEach(function (r) { if (r.dev && r.dev !== '전체') return; var v = +r.mau; if (r.mau !== '' && r.mau != null && isFinite(v)) o[String(r.period).slice(0, 7)] = v; });
+    return o;
+  }
+  function renderMc() {
+    mcTabs();
+    if (!mcOn()) return;
+    var box = $('#mcx'), s = state.snap;
+    if (!A.data && !MC.aBusy && !MC.aErr) mcLoadAct(false);
+    if (!s || !s.monthlySeries) { box.innerHTML = '<p class="empty">' + (s ? '월간 회원 집계가 없습니다. 상단 [갱신]을 눌러 주세요.' : '회원 데이터를 불러오는 중…') + '</p>'; return; }
+    var ms = {}; s.monthlySeries.forEach(function (x) { ms[x.month] = x; });
+    var mau = mcMau(), last = s.monthlySeries[s.monthlySeries.length - 1].month;
+    var months = kxYm(KX_FROM, last).filter(function (k) { return ms[k]; });
+    if (!months.length) { box.innerHTML = '<p class="empty">표시할 월간 회원 집계가 없습니다.</p>'; return; }
+    if (!MC.month || months.indexOf(MC.month) < 0) { MC.month = last; for (var q = months.length - 1; q >= 0; q--) if (mau[months[q]] != null) { MC.month = months[q]; break; } }
+    var cur = MC.month, pm = kxPrevYm(cur), py = kxPrevYm(cur, 12), c = ms[cur], p = ms[pm], yv = ms[py];
+    var tot = c.cumulative, mA = mau[cur], mP = mau[pm];
+    var rate = mA != null ? kxPct(mA, tot) : null, rateP = (mP != null && p) ? kxPct(mP, p.cumulative) : null;
+    var gN = p ? tot - p.cumulative : null, gR = p ? kxPct(gN, p.cumulative) : null;
+    var mN = (mA != null && mP != null) ? mA - mP : null, mR = mN != null ? kxPct(mN, mP) : null;
+    var newY = yv ? yv.new : null;
+    var sg = function (v) { return v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '±') + fmt(Math.abs(v)); };
+    var noM = MC.aBusy ? '불러오는 중…' : (MC.aErr || '활동성 월간지표에 이 달 값 없음');
+    var kp = [
+      kxCard('전체 회원 수', fmt(tot), '명', kxYmLabel(cur) + ' 말 기준' + (yv ? ' · 전년동월 대비 ' + kxDelta(kxPct(tot - yv.cumulative, yv.cumulative), '%', 1) : '')),
+      kxCard('전체 회원 대비 MAU 비율', rate == null ? '–' : rate.toFixed(1), rate == null ? '' : '%', rate == null ? noM : 'MAU ' + fmt(mA) + '명' + (rateP != null ? ' · 전월 대비 ' + kxDelta(rate - rateP, '%p', 1) : '')),
+      kxCard('당월 회원 수 변화', sg(gN), '명', '성장률 ' + kxDelta(gR, '%', 2) + ' · 신규 가입 ' + fmt(c.new) + '명'),
+      kxCard('당월 MAU 변화', mN == null ? '–' : sg(mN), mN == null ? '' : '명', mN == null ? noM : '성장률 ' + kxDelta(mR, '%', 1) + ' · MAU ' + fmt(mA) + '명'),
+      kxCard('당월 신규 회원', fmt(c.new), '명', (p ? '전월 대비 ' + kxDelta(kxPct(c.new - p.new, p.new), '%', 1) : '') + (newY != null ? ' · 전년동월 ' + fmt(newY) + '명' : ''))
+    ].join('');
+    var lab = months.map(function (k) { return k.slice(2, 4) + '.' + k.slice(5, 7); }), hiI = months.indexOf(cur);
+    var vTot = months.map(function (k) { return ms[k].cumulative; }), vNew = months.map(function (k) { return ms[k].new; }), vMau = months.map(function (k) { return mau[k] == null ? null : mau[k]; });
+    // 유입경로 표: 기간 합계 상위 순, 소수는 '기타(소수)'에 이미 합쳐져 있음
+    var rs = {}; months.forEach(function (k) { var r = ms[k].route || {}; for (var n in r) rs[n] = (rs[n] || 0) + r[n]; });
+    var routes = Object.keys(rs).sort(function (a, b) { return /기타|미입력/.test(a) - /기타|미입력/.test(b) || rs[b] - rs[a]; });
+    var tm = months.slice().reverse();
+    var tbl = '<table class="mc-t"><thead><tr><th>유입경로</th>' + tm.map(function (k) { return '<th' + (k === cur ? ' class="cur"' : '') + '>' + k.slice(2, 4) + '.' + k.slice(5, 7) + '</th>'; }).join('') + '<th>합계</th></tr></thead><tbody>' +
+      routes.map(function (n) { return '<tr><td>' + esc(n) + '</td>' + tm.map(function (k) { var v = (ms[k].route || {})[n]; return '<td' + (k === cur ? ' class="cur"' : '') + '>' + (v ? fmt(v) : '–') + '</td>'; }).join('') + '<td><b>' + fmt(rs[n]) + '</b></td></tr>'; }).join('') +
+      '<tr class="sum"><td>합계</td>' + tm.map(function (k) { return '<td' + (k === cur ? ' class="cur"' : '') + '>' + fmt(ms[k].new) + '</td>'; }).join('') + '<td>' + fmt(vNew.reduce(function (a, b) { return a + b; }, 0)) + '</td></tr></tbody></table>';
+    box.innerHTML =
+      '<div class="mc-ctl"><label for="mcMonth">기준 월</label><select id="mcMonth">' + months.slice().reverse().map(function (k) { return '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + kxYmLabel(k) + '</option>'; }).join('') + '</select>' +
+        '<span class="mc-note">회원 수는 가입일 기준(현재 회원 명단, 탈퇴 회원 제외) · MAU는 활동성 시트 월간지표(전체 기기)</span></div>' +
+      '<section><div class="kpis mc-kpis">' + kp + '</div></section>' +
+      '<section><div class="grid2">' +
+        '<div class="card"><h3>회원 수</h3><p class="desc">월말 기준 누적 회원 수</p><div class="chart" id="mcTot"></div></div>' +
+        '<div class="card"><h3>신규 회원 수</h3><p class="desc">월별 가입자 수</p><div class="chart" id="mcNew"></div></div>' +
+        '<div class="card"><h3>MAU</h3><p class="desc">월간 활성 사용자 (최근 30일 기준, 전체 기기)</p><div class="chart" id="mcMau"></div></div>' +
+        '<div class="card"><h3>회원 수 · MAU</h3><p class="desc">막대 = 회원 수(MAU + 비활성) · 막대 위 % = 전체 회원 대비 MAU 비율</p><ul class="legend" id="mcLgMix"></ul><div class="chart" id="mcMix"></div></div>' +
+      '</div></section>' +
+      '<section><div class="sec-head"><div><h2>유입경로별 신규 회원 수</h2><p>가입경로 기준 월별 신규 가입자 · 3명 미만 항목은 「기타(소수)」로 합침</p></div></div>' +
+        '<div class="card mc-tw">' + tbl + '</div></section>';
+    $('#mcMonth').onchange = function () { MC.month = this.value; renderMc(); };
+    var ttl = function (i) { return kxYmLabel(months[i]); };
+    aLineChart($('#mcTot'), lab, [{ name: '회원 수', color: css('--s1'), vals: vTot }], { hi: hiI, title: ttl, fmtV: function (v) { return fmt(v) + '명'; }, label: '회원 수 추이' });
+    aLineChart($('#mcNew'), lab, [{ name: '신규 회원', color: css('--s2'), vals: vNew }], { zero: true, hi: hiI, title: ttl, fmtV: function (v) { return fmt(v) + '명'; }, label: '신규 회원 추이' });
+    if (vMau.some(function (v) { return v != null; })) aLineChart($('#mcMau'), lab, [{ name: 'MAU', color: css('--s3'), vals: vMau }], { hi: hiI, title: ttl, fmtV: function (v) { return fmt(v) + '명'; }, label: 'MAU 추이' });
+    else $('#mcMau').innerHTML = '<p class="empty">' + noM + '</p>';
+    var actv = vMau.map(function (v) { return v == null ? 0 : v; }), rest = vTot.map(function (t, i) { return vMau[i] == null ? t : Math.max(0, t - vMau[i]); });
+    $('#mcLgMix').innerHTML = kxLegend([{ name: 'MAU', color: css('--s3') }, { name: '비활성 회원 (회원 수 − MAU)', color: css('--axis') }]);
+    kxBars($('#mcMix'), lab, [{ name: 'MAU', color: css('--s3'), vals: actv }, { name: '비활성 회원', color: css('--axis'), op: 0.55, vals: rest }],
+      { title: ttl, fmtV: function (v) { return fmt(Math.round(v)) + '명'; }, top: function (i) { return vMau[i] == null ? '' : kxPct(vMau[i], vTot[i]).toFixed(1) + '%'; },
+        extra: function (i) { return [{ k: 'MAU 비율', v: vMau[i] == null ? '–' : kxPct(vMau[i], vTot[i]).toFixed(1) + '%' }]; }, label: '회원 수와 MAU' });
+  }
+
   // ---- 좌측 메뉴 · 화면 전환 ------------------------------------------------
   // 홈 / 매출(닥터빌·팜빌 포인트) / 회원 지표(닥터빌·팜빌 회원 정보·활동성) / 분석 리포트·LLM(준비 중)
   var VIEWS = ['home', 'members', 'pharm', 'sales', 'points', 'ppoints', 'seminar', 'ads', 'sched', 'sads', 'conf', 'activity', 'wact', 'pactivity', 'report', 'llm', 'accounts'];
@@ -5855,7 +6017,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
         var sub = b.closest('.nav-sub'); if (sub && sub.previousElementSibling) sub.previousElementSibling.setAttribute('aria-expanded', 'true');
       } else b.removeAttribute('aria-current');
     });
-    setNav(false); dbBadge();
+    setNav(false); dbBadge(); if (mcOn()) renderMc(); else mcTabs();
     $('#refreshBtn').title = isPts() ? '담당 PC의 포인트 갱신 서버에서 닥터빌·팜빌 신규 CSV만 적재·집계합니다' : VIEW === 'activity' ? '활동성 시트의 최신 값을 다시 불러옵니다' : VIEW === 'pactivity' ? '저장소의 팜빌 활동성 파일을 다시 읽어 DB에 저장합니다 (시트 최신화는 Claude에 요청)' : VIEW === 'sales' ? '매출 시트의 최신 값을 다시 불러옵니다' : VIEW === 'ads' ? '광고 현황판 통합_Raw를 다시 집계해 DB에 저장합니다 (추가·변경 건수 안내)' : VIEW === 'sched' ? '편성표에서 이번 달 세미나를 다시 불러옵니다 (대시보드에서 수정한 건은 유지)' : VIEW === 'conf' ? 'DB의 등록 행사와 구글 캘린더(닥터빌 마케팅팀) 일정을 다시 불러옵니다' : VIEW === 'seminar' ? '저장소의 세미나 편성 파일을 다시 읽어 DB에 저장합니다 (편성표 최신화는 Claude에 「세미나 편성 갱신」 요청)' : '구글시트의 최신 값을 불러와 다시 집계합니다';
     if (!fromHash) { try { history.replaceState(null, '', VIEW === 'home' ? location.pathname + location.search : '#' + VIEW); } catch (e) {} }
     if (stat) {
