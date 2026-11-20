@@ -734,7 +734,7 @@ body.mc-on #app > section, body.mc-on #memberFoot, body.mc-on .member-only, body
 /* 화면별 KPI 탭 (2026-11-19) */
 .kx-tabs[hidden], .kxp { display: none; }
 body.kx-on .kxp { display: block; }
-body.kx-on #schedApp > :not(.kx-tabs):not(.kxp), body.kx-on #confApp > :not(.kx-tabs):not(.kxp),
+body.kx-on #semApp > :not(.kx-tabs):not(.kxp), body.kx-on #confApp > :not(.kx-tabs):not(.kxp),
 body.kx-on #adsApp > :not(.kx-tabs):not(.kxp), body.kx-on #pointApp > :not(.kx-tabs):not(.kxp) { display: none !important; }
 body.kx-on #pdfBtn { display: none !important; }
 .kx-rev { margin: 0 0 18px; }
@@ -1382,8 +1382,6 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="schedMain">
   <div class="wrap" id="schedApp">
-    <div class="sl-tabs kx-tabs" id="kxTabs_sched" role="tablist" aria-label="화면 탭" hidden></div>
-    <div class="kxp" id="kxp_sched"></div>
     <section>
       <div class="sec-head">
         <div class="cal-head"><button type="button" class="btn" id="schPrev" aria-label="이전 달">‹</button><h2 id="schMonth"></h2><button type="button" class="btn" id="schNext" aria-label="다음 달">›</button><button type="button" class="btn" id="schToday">오늘</button><button type="button" class="btn accent" id="schAdd">+ 세미나 등록</button></div>
@@ -1543,6 +1541,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
 <main id="semMain">
   <div class="wrap" id="semApp">
+    <div class="sl-tabs kx-tabs" id="kxTabs_seminar" role="tablist" aria-label="화면 탭" hidden></div>
+    <div class="kxp" id="kxp_seminar"></div>
     <section>
       <div class="sec-head">
         <div>
@@ -2449,7 +2449,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     if (/^api\|get\|dv|^file\|data\/(index|snapshots)/.test(key)) return 'members';
     if (/^api\|activity/.test(key)) return 'activity';
     if (/^api\|sales/.test(key)) return 'sales';
-    if (/^api\|schedule|^api\|webinar|^kx\|nonacad/.test(key)) return 'sched';
+    if (/^api\|schedule/.test(key)) return 'sched';
+    if (/^api\|webinar|^kx\|nonacad/.test(key)) return 'seminar';
     if (/^api\|ads/.test(key)) return 'ads';
     if (/seminar/.test(key)) return 'seminar';
     if (/pv_points/.test(key)) return 'ppoints';
@@ -6089,8 +6090,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   //   매출·목표·전년 대비는 매출 마감 시트 (매출) 탭(목표대비·전년동기대비 표)으로 통일 (SL.data, sales.gs)
   // =====================================================================
   var KX = { ent: null, entBusy: false, entErr: '', tab: {}, month: {}, wf: { type: 'all', cat: 'all', co: 'all' }, web: null, webBusy: false, webErr: '', slBusy: false, slErr: '', na: null, naBusy: false, naErr: '' };
-  var KX_VIEWS = { points: { name: '포인트 KPI', app: '#pointApp' }, sched: { name: '웨비나 KPI', app: '#schedApp' }, conf: { name: '컨퍼런스빌 KPI', app: '#confApp' }, ads: { name: '광고 KPI', app: '#adsApp' } };
-  var KX_MAIN = { points: '포인트 현황', sched: '편성 달력', conf: '일정 달력', ads: '광고 현황판' };
+  var KX_VIEWS = { points: { name: '포인트 KPI', app: '#pointApp' }, seminar: { name: '웨비나 KPI', app: '#semApp' }, conf: { name: '컨퍼런스빌 KPI', app: '#confApp' }, ads: { name: '광고 KPI', app: '#adsApp' } };
+  var KX_MAIN = { points: '포인트 현황', seminar: '세미나 편성', conf: '일정 달력', ads: '광고 현황판' };
   try { var kt = JSON.parse(localStorage.getItem('mv-kx-tab') || '{}'); if (kt && typeof kt === 'object') KX.tab = kt; } catch (e) {}
   function kxOn() { return !!KX_VIEWS[VIEW] && KX.tab[VIEW] === 'kpi' && INTERNAL; }
   function kxSync() {
@@ -6132,10 +6133,10 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   function kxRefresh(btn) {
     btn.disabled = true; btn.textContent = '갱신 중…';
     var jobs = [kxLoadSales(true)];
-    if (VIEW === 'sched') { jobs.push(kxLoadWeb(true)); jobs.push(kxLoadEnt(true)); KX.na = null; jobs.push(kxLoadNa()); }
+    if (VIEW === 'seminar') { jobs.push(kxLoadWeb(true)); jobs.push(kxLoadEnt(true)); KX.na = null; jobs.push(kxLoadNa()); }
     if (VIEW === 'ads') jobs.push(loadAds(true));
     if (VIEW === 'points') { btn.disabled = false; btn.textContent = '갱신'; return pointRefresh(btn); }
-    return Promise.all(jobs).then(function () { btn.disabled = false; btn.textContent = '갱신'; toast('매출 시트' + (VIEW === 'sched' ? '·편성표' : VIEW === 'ads' ? '·광고 현황판' : '') + '를 다시 불러왔습니다.'); renderKx(); });
+    return Promise.all(jobs).then(function () { btn.disabled = false; btn.textContent = '갱신'; toast('매출 시트' + (VIEW === 'seminar' ? '·편성표' : VIEW === 'ads' ? '·광고 현황판' : '') + '를 다시 불러왔습니다.'); renderKx(); });
   }
 
   // ---- 매출 시트 항목 값 ------------------------------------------------------------
@@ -6206,7 +6207,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     if (!SL.data && !KX.slBusy && !KX.slErr) kxLoadSales(false);
     try {
       if (VIEW === 'points') renderKxPoints(box);
-      else if (VIEW === 'sched') renderKxWeb(box);
+      else if (VIEW === 'seminar') renderKxWeb(box);
       else if (VIEW === 'conf') renderKxConf(box);
       else if (VIEW === 'ads') renderKxAds(box);
     } catch (e) { box.innerHTML = '<p class="empty">화면을 그리지 못했습니다: ' + esc(e.message || String(e)) + '</p>'; console.error(e); }
