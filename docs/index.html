@@ -2662,7 +2662,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   // 구글시트 응답을 DB 저장본으로 캐시: get(회원 집계)·activity·sales·schedule
   //   refresh(회원 [갱신]) = 원본 재집계 → 'get' 저장본을 덮어쓰고, 주차·월별 저장본은 비움
   //   fresh:true = 원본 다시 읽기 → 저장본 덮어씀
-  var API_DB = { get: function (r) { return !!r.snap; }, activity: function (r) { return !!r.activity; }, activityPv: function (r) { return !!r.activity; }, sales: function (r) { return !!(r.sales && r.sales.years); }, schedule: function (r) { return !!r.schedule; }, calendar: function (r) { return !!(r.calendar && r.calendar.events); }, ads: function (r) { return !!(r.ads && r.ads.agg); }, webinar: function (r) { return !!(r.webinar && r.webinar.rows); } };
+  var API_DB = { get: function (r) { return !!r.snap; }, activity: function (r) { return !!r.activity; }, activityPv: function (r) { return !!r.activity; }, sales: function (r) { return !!(r.sales && r.sales.years); }, schedule: function (r) { return !!r.schedule; }, calendar: function (r) { return !!(r.calendar && r.calendar.events); }, ads: function (r) { return !!(r.ads && r.ads.agg); }, webinar: function (r) { return !!(r.webinar && r.webinar.rows && r.webinar.v >= 2); } };
   var API_TTL = { calendar: 30 * 60 * 1000 };   // 캘린더는 30분 지나면 원본 재확인 (실패 시 저장본 표시)
   function stableStr(o) { return JSON.stringify(Object.keys(o).sort().reduce(function (a, k) { a[k] = o[k]; return a; }, {})); }
   function apiKey(action, extra, svc) {
@@ -6088,7 +6088,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   // 화면별 KPI 탭 (2026-11-19) — 포인트 · 현황>세미나(웨비나) · 현황>컨퍼런스(컨퍼런스빌) · 광고
   //   매출·목표·전년 대비는 매출 마감 시트 (매출) 탭(목표대비·전년동기대비 표)으로 통일 (SL.data, sales.gs)
   // =====================================================================
-  var KX = { tab: {}, month: {}, wf: { type: 'all', cat: 'all', co: 'all' }, web: null, webBusy: false, webErr: '', slBusy: false, slErr: '', na: null, naBusy: false, naErr: '' };
+  var KX = { ent: null, entBusy: false, entErr: '', tab: {}, month: {}, wf: { type: 'all', cat: 'all', co: 'all' }, web: null, webBusy: false, webErr: '', slBusy: false, slErr: '', na: null, naBusy: false, naErr: '' };
   var KX_VIEWS = { points: { name: '포인트 KPI', app: '#pointApp' }, sched: { name: '웨비나 KPI', app: '#schedApp' }, conf: { name: '컨퍼런스빌 KPI', app: '#confApp' }, ads: { name: '광고 KPI', app: '#adsApp' } };
   var KX_MAIN = { points: '포인트 현황', sched: '편성 달력', conf: '일정 달력', ads: '광고 현황판' };
   try { var kt = JSON.parse(localStorage.getItem('mv-kx-tab') || '{}'); if (kt && typeof kt === 'object') KX.tab = kt; } catch (e) {}
@@ -6132,7 +6132,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
   function kxRefresh(btn) {
     btn.disabled = true; btn.textContent = '갱신 중…';
     var jobs = [kxLoadSales(true)];
-    if (VIEW === 'sched') { jobs.push(kxLoadWeb(true)); KX.na = null; jobs.push(kxLoadNa()); }
+    if (VIEW === 'sched') { jobs.push(kxLoadWeb(true)); jobs.push(kxLoadEnt(true)); KX.na = null; jobs.push(kxLoadNa()); }
     if (VIEW === 'ads') jobs.push(loadAds(true));
     if (VIEW === 'points') { btn.disabled = false; btn.textContent = '갱신'; return pointRefresh(btn); }
     return Promise.all(jobs).then(function () { btn.disabled = false; btn.textContent = '갱신'; toast('매출 시트' + (VIEW === 'sched' ? '·편성표' : VIEW === 'ads' ? '·광고 현황판' : '') + '를 다시 불러왔습니다.'); renderKx(); });
@@ -6299,20 +6299,43 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 
   // ---- ② 웨비나 (현황 > 세미나) --------------------------------------------------------
   var KX_WTYPES = ['웹심포지엄', '라이브세미나'];
+  // 세미나 달력과 같은 원본: 편성표 (2026) RAW(+ 지난해 RAW 탭) + 대시보드 등록·수정(DB seminar_entries)
+  function kxLoadEnt(fresh) {
+    if (!SB || !INTERNAL || KX.entBusy || (KX.ent && !fresh)) return Promise.resolve();
+    KX.entBusy = true;
+    return sbq(SB.from('seminar_entries').select('kind,sheet_key,date,time,fields').gte('date', KX_FROM + '-01'))
+      .then(function (rows) { KX.ent = rows || []; KX.entErr = ''; }, function (e) { KX.ent = []; KX.entErr = 'DB 등록 세미나를 불러오지 못했습니다: ' + (e.message || e); })
+      .then(function () { KX.entBusy = false; kxAfter(); });
+  }
+  function kxWType(t) { t = String(t || ''); return /웹\s*심포/.test(t) ? '웹심포지엄' : /라이브/.test(t) ? '라이브세미나' : ''; }
   function kxWebRows() {
     var W = KX.web; if (!W) return [];
     var K = W.keys, at = function (k) { return K.indexOf(k); };
-    var iy = at('ym'), iio = at('io'), it = at('type'), ic = at('cat'), ico = at('co'), isv = at('sv'), iac = at('ac'), itx = at('tx'), ist = at('st');
-    return W.rows.map(function (r) {
-      var t = String(r[it] || ''), tp = KX_WTYPES.filter(function (w) { return t.indexOf(w) >= 0; })[0] || '';
-      return { ym: r[iy], io: /내부/.test(r[iio]) ? '내부' : /외부/.test(r[iio]) ? '외부' : '미기재', type: tp, cat: String(r[ic] || '').replace(/\(비공개\)/g, '').trim() || '미기재', co: r[ico] || '미기재',
-        sv: String(r[isv] || '').trim(), ac: String(r[iac] || ''), tx: String(r[itx] || ''), st: ist >= 0 ? String(r[ist] || '') : '' };
-    }).filter(function (o) { return o.type && !/사전녹화/.test(o.tx) && !/취소|실패/.test(o.st); });
+    var iy = at('ym'), iio = at('io'), it = at('type'), ic = at('cat'), ico = at('co'), isv = at('sv'), iac = at('ac'), itx = at('tx'), ist = at('st'), ik = at('k');
+    var mk = function (o) {
+      return { ym: o.ym, io: /내부/.test(o.io) ? '내부' : /외부/.test(o.io) ? '외부' : '미기재', type: kxWType(o.type), cat: String(o.cat || '').replace(/\(비공개\)/g, '').trim() || '미기재', co: o.co || '미기재',
+        sv: String(o.sv || '').trim(), ac: String(o.ac || ''), tx: String(o.tx || ''), st: String(o.st || ''), src: o.src };
+    };
+    var ov = {}; (KX.ent || []).forEach(function (e) { if (e.sheet_key) ov[e.sheet_key] = e; });
+    var sheetBy = {}, out = [];
+    W.rows.forEach(function (r) {
+      var o = { ym: r[iy], io: r[iio], type: r[it], cat: r[ic], co: r[ico], sv: r[isv], ac: r[iac], tx: r[itx], st: ist >= 0 ? r[ist] : '', src: 'sheet' };
+      var k = ik >= 0 ? r[ik] : '';
+      if (k) { sheetBy[k] = o; if (ov[k]) return; }   // 대시보드에서 수정·숨김한 시트 건은 DB 값으로
+      out.push(mk(o));
+    });
+    (KX.ent || []).forEach(function (e) {
+      if (e.kind === 'hidden' || !e.date) return;
+      var f = e.fields || {}, base = (e.sheet_key && sheetBy[e.sheet_key]) || {};
+      out.push(mk({ ym: e.date.slice(0, 7), io: f.io, type: f.type, cat: f.cat, co: f.company, sv: base.sv || '', ac: base.ac || '', tx: f.tx, st: f.status, src: e.kind }));
+    });
+    return out.filter(function (o) { return o.type && !/사전녹화/.test(o.tx) && !/취소|실패/.test(o.st); });
   }
-  function kxDeep(sv) { return /심화/.test(sv || ''); }
+  function kxDeep(sv) { return !!sv && !/없음|^-+$/.test(sv); }   // (2026) RAW W열: 인식형·분석형·리뷰형·적용형 = 심화설문 진행
   function kxNonAc(o) { return /비학술/.test(o.ac); }
   function renderKxWeb(box) {
     if (!KX.web && !KX.webBusy && !KX.webErr) kxLoadWeb(false);
+    if (!KX.ent && !KX.entBusy) kxLoadEnt(false);
     if (!KX.na && !KX.naBusy) kxLoadNa();
     var rev = kxRevHtml('웨비나', ['웨비나'], 'web');
     if (!KX.web) { box.innerHTML = rev + '<p class="empty">' + (KX.webErr || '편성표 RAW 탭을 불러오는 중…') + '</p>'; return; }
@@ -6336,13 +6359,14 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
       kxCard('심화설문 진행', fmt(b.deep), '건', (b.n ? '운영건수 대비 ' + (b.deep / b.n * 100).toFixed(1) + '%' : '') + '<br>누계 ' + fmt(ytd.deep) + '건')
     ].join('');
     var opt = function (map, cur, lbl) { return '<option value="all">' + lbl + '</option>' + Object.keys(map).sort(function (a, c) { return map[c] - map[a]; }).map(function (k) { return '<option value="' + esc(k) + '"' + (k === cur ? ' selected' : '') + '>' + esc(k) + ' (' + map[k] + ')</option>'; }).join(''); };
+    var svYr = {}; all.forEach(function (o) { if (o.sv) svYr[o.ym.slice(0, 4)] = 1; });
     var svTypes = {}; months.forEach(function (m) { for (var k in by[m].sv) svTypes[k] = (svTypes[k] || 0) + by[m].sv[k]; });
     var svK = Object.keys(svTypes).sort(function (a, c) { return svTypes[c] - svTypes[a]; });
     var tm = months.filter(function (m) { return m <= (last > nowYm ? last : nowYm); }).reverse();
     var td = function (m, v, extra) { return '<td' + (m === curM ? ' class="cur"' : '') + '>' + v + (extra || '') + '</td>'; };
     var tbl = '<table class="mc-t kx-t"><thead><tr><th>구분</th>' + tm.map(function (m) { return '<th' + (m === curM ? ' class="cur"' : '') + '>' + m.slice(2, 4) + '.' + m.slice(5, 7) + (m > nowYm ? '<small>예정</small>' : '') + '</th>'; }).join('') + '</tr></thead><tbody>' +
       '<tr class="sum"><td>전체 운영건수</td>' + tm.map(function (m) { return td(m, fmt(by[m].n)); }).join('') + '</tr>' +
-      '<tr><td>심화설문 (합계)</td>' + tm.map(function (m) { var x = by[m]; return td(m, fmt(x.deep), x.n ? '<small>' + (x.deep / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr>' +
+      '<tr><td>심화설문 (합계)</td>' + tm.map(function (m) { var x = by[m]; if (!svYr[m.slice(0, 4)]) return td(m, '–'); return td(m, fmt(x.deep), x.n ? '<small>' + (x.deep / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr>' +
       svK.map(function (k) { return '<tr class="sub"><td>· ' + esc(k) + '</td>' + tm.map(function (m) { var x = by[m], v = x.sv[k] || 0; return td(m, v ? fmt(v) : '–', v && x.n ? '<small>' + (v / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr>'; }).join('') +
       '<tr><td>비학술강의</td>' + tm.map(function (m) { var x = by[m]; return td(m, fmt(x.nonac), x.n ? '<small>' + (x.nonac / x.n * 100).toFixed(0) + '%</small>' : ''); }).join('') + '</tr></tbody></table>';
     box.innerHTML = rev +
@@ -6350,13 +6374,13 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
         '<label>유형 <select id="kxWt"><option value="all">웹심포지엄 + 라이브세미나</option>' + KX_WTYPES.map(function (t) { return '<option' + (F.type === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></label>' +
         '<label>카테고리 <select id="kxWc">' + opt(cats, F.cat, '전체 카테고리') + '</select></label>' +
         '<label>회사 <select id="kxWco">' + opt(cos, F.co, '전체 회사') + '</select></label>' +
-        '<span class="mc-note">편성표 RAW 탭 · 사전녹화·취소 제외 · 필터는 건수(카드·그래프·표)에 적용 · 매출은 매출 시트 기준</span></div>' +
+        '<span class="mc-note">세미나 달력과 같은 원본: 편성표 (2026) RAW + 대시보드 등록·수정(DB)' + (KX.ent && KX.ent.length ? ' ' + KX.ent.filter(function (e) { return e.kind !== 'hidden'; }).length + '건 반영' : '') + ' · 지난해는 RAW 탭 · 사전녹화·취소 제외 · 필터는 건수에만 적용 · 매출은 매출 시트 기준' + (KX.entErr ? ' · ' + esc(KX.entErr) : '') + '</span></div>' +
       '<section><div class="kpis">' + kp + '</div></section>' +
       '<section><div class="grid2">' +
         '<div class="card"><h3>월별 운영건수 (내부·외부)</h3><ul class="legend" id="kxWLg1"></ul><div class="chart" id="kxW1"></div></div>' +
         '<div class="card"><h3>월별 집행 금액 (내부·외부)</h3><p class="desc">매출 마감 시트 「웨비나(라이브세미나)」 · 마감 전 달은 비어 있음</p><ul class="legend" id="kxWLg2"></ul><div class="chart" id="kxW2"></div></div>' +
       '</div></section>' +
-      '<section><div class="sec-head"><div><h2>월별 운영건수 대비 심화설문·비학술강의</h2><p>심화설문 = 설문유형에 「심화」 포함 · 비학술 = 학술구분 「비학술」 · 작은 글씨 = 운영건수 대비 비율</p></div></div><div class="card mc-tw">' + tbl + '</div></section>' +
+      '<section><div class="sec-head"><div><h2>월별 운영건수 대비 심화설문·비학술강의</h2><p>심화설문 = (2026) RAW 탭 W열(인식형·분석형·리뷰형·적용형, 「설문없음」 제외 · 지난해는 W열 없음) · 비학술 = RAW 탭 학술구분 「비학술」 · 작은 글씨 = 운영건수 대비 비율</p></div></div><div class="card mc-tw">' + tbl + '</div></section>' +
       '<section id="kxNaSec"></section>';
     $('#kxWm').onchange = function () { KX.month.webm = this.value; renderKx(); };
     $('#kxWt').onchange = function () { F.type = this.value; renderKx(); };
