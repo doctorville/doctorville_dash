@@ -1165,6 +1165,53 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
 #slx .legend span{display:inline-flex;align-items:center}
 #slx .empty{padding:24px;color:var(--mute)}
 #slx h2{color:var(--ink)}
+:root { --rest: #C9CED6; }
+
+/* 다크 테마 보정 (2026-11-20) */
+:root[data-theme="dark"] { --rest: #4A5466; }
+:root[data-theme="dark"] :is(.top .btn.primary, .btn.primary, .btn.accent, .modal button.ok, #llmSend, .gate-card button, .role-super) { background: #2F6CD0 !important; border-color: #2F6CD0 !important; color: #fff !important; }
+:root[data-theme="dark"] .nav-btn { background: #2F6CD0 !important; border-color: #2F6CD0 !important; }
+:root[data-theme="dark"] .llm-q span { background: #2F6CD0; }
+:root[data-theme="dark"] #toast.err { background: #C93C41; }
+:root[data-theme="dark"] .kpi .label { color: var(--ink-2); }
+:root[data-theme="dark"] .nav-item, :root[data-theme="dark"] .nav-head { color: var(--ink-2); }
+:root[data-theme="dark"] .seg button:not([aria-pressed="true"]) { color: var(--ink-2); }
+:root[data-theme="dark"] .db-badge.err { color: #FF8A8E; border-color: #6B2A2E; }
+:root[data-theme="dark"] .svc-pv, :root[data-theme="dark"] .io-out { color: #2AD1A6; }
+:root[data-theme="dark"] #schCal .slot.db { outline-color: #5B9BFF; } :root[data-theme="dark"] .schtbl small.dbtag { color: #8FB8FF; }
+:root[data-theme="dark"] #slx { --bg:#171B24; --card:#171B24; --ink:#E6E9F0; --mute:#9AA3B3; --line:#2A303C; --head:#1D2633; --tint:#1A2232; --brand:#7DB0FF; --brand2:#3FC2F5; --mint:#2AD1A6; --rule:#5B9BFF; --up:#34C77B; --down:#FF6B6F; --shadow:none; --fc:#2A57A0; --target:#8FB8FF; --prev:#8B93A3; }
+:root[data-theme="dark"] #slx .dd, :root[data-theme="dark"] #slx .chartcard { --in:#5B9BFF; --ex:#2AD1A6; --in-s:#1C3358; --ex-s:#123D35; --in-m:#18212F; --ex-m:#16262A; }
+:root[data-theme="dark"] #slx .slx-ban { background: linear-gradient(120deg,#16263d 0%,#132f3a 55%,#123329 100%); color: #E6E9F0; }
+:root[data-theme="dark"] #slx .slx-ban p { color: #9AA3B3; }
+:root[data-theme="dark"] #slx .slx-warn { color: #F7C64F; background: #2B2414; }
+:root[data-theme="dark"] #slx .yc { background: #2A303C; color: #C9D1DE; }
+:root[data-theme="dark"] #slx .kg .ct.em em, :root[data-theme="dark"] #slx .sum3 .n { color: #0F1218; }
+:root[data-theme="dark"] #slx .sum3 b.dn, :root[data-theme="dark"] #slx .pt td.d .chip, :root[data-theme="dark"] #slx .pt .chip, :root[data-theme="dark"] #slx .pt tr.r2.hot td.d.pos, :root[data-theme="dark"] #slx .pt tr.r2.hot td.d { color: color-mix(in srgb, var(--down) 80%, #fff); }
+:root[data-theme="dark"] #slx .sum3 li:has(b.dn) .n { background: var(--down); }
+@media (prefers-color-scheme: dark) {
+
+/* 다크 테마 보정 (2026-11-20) */
+:root:not([data-theme="light"]) { --rest: #4A5466; }
+:root:not([data-theme="light"]) :is(.top .btn.primary, .btn.primary, .btn.accent, .modal button.ok, #llmSend, .gate-card button, .role-super) { background: #2F6CD0 !important; border-color: #2F6CD0 !important; color: #fff !important; }
+:root:not([data-theme="light"]) .nav-btn { background: #2F6CD0 !important; border-color: #2F6CD0 !important; }
+:root:not([data-theme="light"]) .llm-q span { background: #2F6CD0; }
+:root:not([data-theme="light"]) #toast.err { background: #C93C41; }
+:root:not([data-theme="light"]) .kpi .label { color: var(--ink-2); }
+:root:not([data-theme="light"]) .nav-item, :root:not([data-theme="light"]) .nav-head { color: var(--ink-2); }
+:root:not([data-theme="light"]) .seg button:not([aria-pressed="true"]) { color: var(--ink-2); }
+:root:not([data-theme="light"]) .db-badge.err { color: #FF8A8E; border-color: #6B2A2E; }
+:root:not([data-theme="light"]) .svc-pv, :root:not([data-theme="light"]) .io-out { color: #2AD1A6; }
+:root:not([data-theme="light"]) #schCal .slot.db { outline-color: #5B9BFF; } :root:not([data-theme="light"]) .schtbl small.dbtag { color: #8FB8FF; }
+:root:not([data-theme="light"]) #slx { --bg:#171B24; --card:#171B24; --ink:#E6E9F0; --mute:#9AA3B3; --line:#2A303C; --head:#1D2633; --tint:#1A2232; --brand:#7DB0FF; --brand2:#3FC2F5; --mint:#2AD1A6; --rule:#5B9BFF; --up:#34C77B; --down:#FF6B6F; --shadow:none; --fc:#2A57A0; --target:#8FB8FF; --prev:#8B93A3; }
+:root:not([data-theme="light"]) #slx .dd, :root:not([data-theme="light"]) #slx .chartcard { --in:#5B9BFF; --ex:#2AD1A6; --in-s:#1C3358; --ex-s:#123D35; --in-m:#18212F; --ex-m:#16262A; }
+:root:not([data-theme="light"]) #slx .slx-ban { background: linear-gradient(120deg,#16263d 0%,#132f3a 55%,#123329 100%); color: #E6E9F0; }
+:root:not([data-theme="light"]) #slx .slx-ban p { color: #9AA3B3; }
+:root:not([data-theme="light"]) #slx .slx-warn { color: #F7C64F; background: #2B2414; }
+:root:not([data-theme="light"]) #slx .yc { background: #2A303C; color: #C9D1DE; }
+:root:not([data-theme="light"]) #slx .kg .ct.em em, :root:not([data-theme="light"]) #slx .sum3 .n { color: #0F1218; }
+:root:not([data-theme="light"]) #slx .sum3 b.dn, :root:not([data-theme="light"]) #slx .pt td.d .chip, :root:not([data-theme="light"]) #slx .pt .chip, :root:not([data-theme="light"]) #slx .pt tr.r2.hot td.d.pos, :root:not([data-theme="light"]) #slx .pt tr.r2.hot td.d { color: color-mix(in srgb, var(--down) 80%, #fff); }
+:root:not([data-theme="light"]) #slx .sum3 li:has(b.dn) .n { background: var(--down); }
+}
 </style>
 </head>
 <body class="locked">
@@ -2017,7 +2064,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     var next = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('mv-theme', next); } catch (e) {}
-    renderAll(); renderPoints();
+    kxRerender();
   });
 
   // ---- 툴팁 --------------------------------------------------------------
@@ -6031,8 +6078,8 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     if (vMau.some(function (v) { return v != null; })) aLineChart($('#mcMau'), lab, [{ name: 'MAU', color: css('--s3'), vals: vMau }], { hi: hiI, title: ttl, fmtV: function (v) { return fmt(v) + '명'; }, label: 'MAU 추이' });
     else $('#mcMau').innerHTML = '<p class="empty">' + noM + '</p>';
     var actv = vMau.map(function (v) { return v == null ? 0 : v; }), rest = vTot.map(function (t, i) { return vMau[i] == null ? t : Math.max(0, t - vMau[i]); });
-    $('#mcLgMix').innerHTML = kxLegend([{ name: 'MAU', color: css('--s3') }, { name: '비활성 회원 (회원 수 − MAU)', color: css('--axis') }]);
-    kxBars($('#mcMix'), lab, [{ name: 'MAU', color: css('--s3'), vals: actv }, { name: '비활성 회원', color: css('--axis'), op: 0.55, vals: rest }],
+    $('#mcLgMix').innerHTML = kxLegend([{ name: 'MAU', color: css('--s3') }, { name: '비활성 회원 (회원 수 − MAU)', color: css('--rest') }]);
+    kxBars($('#mcMix'), lab, [{ name: 'MAU', color: css('--s3'), vals: actv }, { name: '비활성 회원', color: css('--rest'), vals: rest }],
       { title: ttl, fmtV: function (v) { return fmt(Math.round(v)) + '명'; }, top: function (i) { return vMau[i] == null ? '' : kxPct(vMau[i], vTot[i]).toFixed(1) + '%'; },
         extra: function (i) { return [{ k: 'MAU 비율', v: vMau[i] == null ? '–' : kxPct(vMau[i], vTot[i]).toFixed(1) + '%' }]; }, label: '회원 수와 MAU' });
   }
@@ -6058,6 +6105,12 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     });
     document.body.classList.toggle('kx-on', kxOn());
     if (kxOn()) renderKx();
+  }
+  function kxRerender() {   // 테마 변경 시 현재 화면을 새 색으로 다시 그림 (SVG 색은 그릴 때 읽음)
+    try { if (state.snap) renderAll(); renderPoints(); } catch (e) { console.warn(e); }
+    var f = { activity: 'renderActivity', pactivity: 'renderPvActivity', sales: 'renderSales', seminar: 'renderSeminar', ads: 'renderAds', sched: 'renderSchedule', conf: 'renderConf', wact: 'renderWact', report: 'renderReport', home: 'renderHome', llm: 'renderLlm' }[VIEW];
+    try { if (f === 'renderActivity') renderActivity(); else if (f === 'renderPvActivity') renderPvActivity(); else if (f === 'renderSales') renderSales(); else if (f === 'renderSeminar') renderSeminar(); else if (f === 'renderAds') renderAds(); else if (f === 'renderSchedule') renderSchedule(); else if (f === 'renderConf') renderConf(); else if (f === 'renderWact') renderWact(); else if (f === 'renderReport') renderReport(); else if (f === 'renderHome') renderHome(); } catch (e) { console.warn(e); }
+    kxAfter(); if (mcOn()) renderMc();
   }
   function kxAfter() { if (kxOn()) renderKx(); }
   function kxNeedSheet() { return CONFIG.appsScriptUrl && (PW || DB.on); }
@@ -6197,7 +6250,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     zero.forEach(function (z) { if (umt.top.indexOf(z) < 0) { umt.top.push(z); umt.rest = umt.rest.filter(function (x) { return x !== z; }); } });
     var stacksOf = function (meth, t) {
       var s = t.top.map(function (k, j) { return { name: k, color: col[j % col.length], vals: ix.map(function (i) { return (meth[k].amt || [])[i] || 0; }) }; });
-      if (t.rest.length) s.push({ name: '기타 ' + t.rest.length + '개', color: css('--axis'), op: 0.6, vals: ix.map(function (i) { return t.rest.reduce(function (a, k) { return a + ((meth[k].amt || [])[i] || 0); }, 0); }) });
+      if (t.rest.length) s.push({ name: '기타 ' + t.rest.length + '개', color: css('--rest'), vals: ix.map(function (i) { return t.rest.reduce(function (a, k) { return a + ((meth[k].amt || [])[i] || 0); }, 0); }) });
       return s;
     };
     var big = d.bigUsers, ths = big ? big.values : [100000, 200000];
@@ -6312,7 +6365,7 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     var cm = months.filter(function (m) { return m <= (last > nowYm ? last : nowYm); }), lab = kxLab(cm), ttl = function (i) { return kxYmLabel(cm[i]) + (cm[i] > nowYm ? ' (예정)' : ''); };
     var s1 = [{ name: '내부', color: css('--s1'), vals: cm.map(function (m) { return by[m].in; }) }, { name: '외부', color: css('--s3'), vals: cm.map(function (m) { return by[m].ex; }) }];
     var other = cm.map(function (m) { return by[m].n - by[m].in - by[m].ex; });
-    if (other.some(function (v) { return v > 0; })) s1.push({ name: '구분 미기재', color: css('--axis'), op: 0.6, vals: other });
+    if (other.some(function (v) { return v > 0; })) s1.push({ name: '구분 미기재', color: css('--rest'), vals: other });
     $('#kxWLg1').innerHTML = kxLegend(s1);
     kxBars($('#kxW1'), lab, s1, { title: ttl, fmtV: function (v) { return fmt(v) + '건'; }, fmtY: function (v) { return fmt(Math.round(v)); }, label: '월별 운영건수' });
     var S = kxSales();
