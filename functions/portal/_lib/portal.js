@@ -4,6 +4,8 @@
 //   운영 대시보드  public.profiles (email, active=true)
 //   주간 업무 보고 teamwork.members (id = auth.users.id)
 //   업무·위험 모니터 dvops.members (email, active=true)
+//   세미나 관리자  별도 Supabase: profiles(login_id=메일, role=admin, status=active) 또는 admin_invites
+//                  (Nhost 환경변수 SEMINAR_SUPABASE_SERVICE_ROLE 이 있어야 확인 가능)
 // 로그인 허용: 포털 계정(사용 중) 또는 서비스 계정 중 하나라도 있으면 허용.
 //             단, 포털 계정이 '사용 중지'면 서비스 계정이 있어도 포털 로그인 차단.
 // 제안서 생성기: 포털 로그인 허용자 전원
@@ -30,21 +32,67 @@ export async function portalAccount(email) {
   return one('select email, name, org, role, active from portal.accounts where email = $1', [email]);
 }
 
+// ── 세미나 관리자 (별도 Supabase, 서비스 롤 키로 서버에서만 조회) ──
+const SEMINAR_URL = () => (process.env.SEMINAR_SUPABASE_URL || 'https://lzwbqgexdgtsoihsifke.supabase.co').replace(/\/+$/, '');
+const seminarKey = () => (process.env.SEMINAR_SUPABASE_SERVICE_ROLE || '').trim();
+export const seminarConfigured = () => !!seminarKey();
+async function seminarFetch(path, init = {}) {
+  const k = seminarKey();
+  return fetch(SEMINAR_URL() + path, { ...init, headers: { apikey: k, Authorization: 'Bearer ' + k, 'Content-Type': 'application/json', ...(init.headers || {}) } });
+}
+async function seminarRows(path) {
+  const r = await seminarFetch(path);
+  if (!r.ok) throw new Error('seminar ' + r.status);
+  return r.json();
+}
+/** 세미나 관리자(메일 로그인) 여부 */
+export async function seminarAdmin(email) {
+  if (!seminarConfigured()) return false;
+  try {
+    const e = encodeURIComponent(email);
+    const [p, inv] = await Promise.all([
+      seminarRows('/rest/v1/profiles?select=id&role=eq.admin&status=eq.active&login_id=eq.' + e + '&limit=1'),
+      seminarRows('/rest/v1/admin_invites?select=email&email=eq.' + e + '&limit=1'),
+    ]);
+    return p.length > 0 || inv.length > 0;
+  } catch (err) { console.error('[portal] seminar check', err.message); return false; }
+}
+/** 세미나 관리자 전체 (계정 관리 목록용): [{email, name}] */
+export async function seminarAdmins() {
+  if (!seminarConfigured()) return [];
+  try {
+    const [p, inv] = await Promise.all([
+      seminarRows('/rest/v1/profiles?select=login_id,name&role=eq.admin&status=eq.active&login_id=like.*%40*'),
+      seminarRows('/rest/v1/admin_invites?select=email,name'),
+    ]);
+    return p.map((x) => ({ email: normEmail(x.login_id), name: x.name || '' })).concat(inv.map((x) => ({ email: normEmail(x.email), name: x.name || '' })));
+  } catch (err) { console.error('[portal] seminar list', err.message); return []; }
+}
+/** 세미나 관리자 화면 1회용 로그인 토큰 (메일 발송 없음) */
+export async function seminarLoginHash(email) {
+  const r = await seminarFetch('/auth/v1/admin/generate_link', { method: 'POST', body: JSON.stringify({ type: 'magiclink', email, data: { admin_otp: true } }) });
+  const j = await r.json().catch(() => ({}));
+  const h = j.hashed_token || j.properties?.hashed_token;
+  if (!r.ok || !h) throw new Error('seminar generate_link ' + r.status + ' ' + (j.msg || j.error_description || ''));
+  return h;
+}
+
 /** 서비스별 회원 여부 (한 곳이 실패해도 나머지는 판단) */
 export async function membership(email) {
-  const [acct, dash, monthly, ops] = await Promise.all([
+  const [acct, dash, monthly, ops, seminar] = await Promise.all([
     portalAccount(email),
     one("select 1 as ok from public.profiles where lower(email) = $1 and active limit 1", [email]),
     one("select 1 as ok from teamwork.members m join auth.users u on u.id = m.id where lower(u.email::text) = $1 limit 1", [email]),
     one("select 1 as ok from dvops.members where lower(email) = $1 and active limit 1", [email]),
+    seminarAdmin(email),
   ]);
   const blocked = !!acct && !acct.active;
-  const allowed = !blocked && (!!acct || !!dash || !!monthly || !!ops);
+  const allowed = !blocked && (!!acct || !!dash || !!monthly || !!ops || seminar);
   return {
     allowed, blocked,
     role: acct && acct.active ? acct.role : null,
     account: acct ? { name: acct.name, org: acct.org } : null,
-    services: { proposal: allowed, dash: allowed && !!dash, monthly: allowed && !!monthly, ops: allowed && !!ops },
+    services: { proposal: allowed, dash: allowed && !!dash, monthly: allowed && !!monthly, ops: allowed && !!ops, seminar: allowed && seminar },
   };
 }
 
