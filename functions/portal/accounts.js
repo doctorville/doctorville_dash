@@ -5,7 +5,7 @@
 //   { action: 'delete', email }
 // 포털 계정만 바꿉니다. 대시보드·주간보고·모니터의 계정·권한은 각 서비스 관리 화면에서 관리합니다.
 import { applyCors, readBody } from '../teamwork/_lib/http.js';
-import { callerEmail, portalAccount, normEmail, isEmail, sql, ensureAuthUser } from './_lib/portal.js';
+import { callerEmail, portalAccount, normEmail, isEmail, sql, ensureAuthUser, seminarAdmins } from './_lib/portal.js';
 
 const s = (v, n = 200) => String(v ?? '').trim().slice(0, n);
 const ROLES = ['admin', 'member'];
@@ -43,7 +43,14 @@ export default async (req, res) => {
     const action = s(b.action, 20);
 
     if (action === 'list') {
-      const { rows } = await sql(LIST_SQL);
+      const [{ rows }, sem] = await Promise.all([sql(LIST_SQL), seminarAdmins()]);
+      // 세미나 관리자(별도 Supabase)를 목록에 합침
+      const byEmail = new Map(rows.map((r) => [r.email, r]));
+      for (const a of sem) {
+        const r = byEmail.get(a.email);
+        if (r) { r.seminar = true; if (!r.name) r.name = a.name; }
+        else { const n = { email: a.email, name: a.name, org: '', role: null, active: null, note: '', updated_at: null, updated_by: null, has_portal: false, dash: false, monthly: false, ops: false, seminar: true }; rows.push(n); byEmail.set(a.email, n); }
+      }
       return out({ ok: true, me, accounts: rows });
     }
 
