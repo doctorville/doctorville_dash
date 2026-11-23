@@ -5,7 +5,7 @@
 //   주간 업무 보고 teamwork.members (id = auth.users.id)
 //   업무·위험 모니터 dvops.members (email, active=true)
 //   세미나 관리자  별도 Supabase: profiles(login_id=메일, role=admin, status=active) 또는 admin_invites
-//                  (Nhost 환경변수 SEMINAR_SUPABASE_SERVICE_ROLE 이 있어야 확인 가능)
+//                  (Nhost 환경변수 SEMINAR_SUPABASE_SERVICE_ROLE = Supabase Secret key(sb_secret_…) 또는 예전 service_role 키)
 // 로그인 허용: 포털 계정(사용 중) 또는 서비스 계정 중 하나라도 있으면 허용.
 //             단, 포털 계정이 '사용 중지'면 서비스 계정이 있어도 포털 로그인 차단.
 // 제안서 생성기: 포털 로그인 허용자 전원
@@ -38,7 +38,9 @@ const seminarKey = () => (process.env.SEMINAR_SUPABASE_SERVICE_ROLE || '').trim(
 export const seminarConfigured = () => !!seminarKey();
 async function seminarFetch(path, init = {}) {
   const k = seminarKey();
-  return fetch(SEMINAR_URL() + path, { ...init, headers: { apikey: k, Authorization: 'Bearer ' + k, 'Content-Type': 'application/json', ...(init.headers || {}) } });
+  // 새 형식 비밀키(sb_secret_…)는 apikey 헤더로만 보냄 (Authorization에 넣으면 거부됨). 예전 service_role(JWT)은 둘 다.
+  const auth = k.startsWith('sb_') ? {} : { Authorization: 'Bearer ' + k };
+  return fetch(SEMINAR_URL() + path, { ...init, headers: { apikey: k, ...auth, 'Content-Type': 'application/json', ...(init.headers || {}) } });
 }
 async function seminarRows(path) {
   const r = await seminarFetch(path);
