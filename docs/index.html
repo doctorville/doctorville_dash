@@ -2399,9 +2399,20 @@ body.view-conf #memberMain, body.view-conf .member-only, body.view-conf #pdfBtn 
     var done = function () { try { sessionStorage.removeItem(SREM); } catch (e) {} location.reload(); };
     (SB ? SB.auth.signOut().catch(function () {}) : Promise.resolve()).then(done, done);
   });
+  // [통합 포털] 포털(doctorville.github.io/portal)에서 넘어온 경우: 포털이 남긴 1회용 PAT로 대시보드 전용 세션을 새로 발급
+  // (포털을 거치지 않고 직접 접속하면 handoff 값이 없어 기존 이메일 인증 화면이 그대로 뜸)
+  function portalHandoff() {
+    var K = 'portal.handoff.dash', h = null;
+    try { h = JSON.parse(localStorage.getItem(K) || 'null'); localStorage.removeItem(K); } catch (e) {}
+    if (!h || !h.pat || !(h.exp > Date.now()) || !SB || !SB.nhost || !SB.nhost.auth.signInPAT) return Promise.resolve();
+    // 포털 경유 로그인은 '이 탭을 닫을 때까지 로그인 유지'로 처리 (새로고침해도 유지)
+    try { sessionStorage.setItem(SREM, '1'); } catch (e) {}
+    // nhost-js v4는 /signin/ 응답의 세션을 자동 저장함
+    return SB.nhost.auth.signInPAT({ personalAccessToken: h.pat }).catch(function (e) { console.warn('[portal] handoff 실패, 일반 로그인으로 진행', e); });
+  }
   function restoreSession() {
     if (!SB) return Promise.resolve();
-    return SB.auth.getSession().then(function (r) {
+    return portalHandoff().then(function () { return SB.auth.getSession(); }).then(function (r) {
       var s = r.data && r.data.session; if (!s) return;
       return applySession(s.user).then(unlock);
     }).catch(function () { lock(); });
