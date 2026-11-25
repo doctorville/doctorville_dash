@@ -17,7 +17,8 @@ export const TABLES={
  team_goals:['select','insert','update'],
  team_goal_strategies:['select','insert','update'],
  team_responsibilities:['select','insert','update','delete'],
- handovers:['select','insert','update','delete']
+ handovers:['select','insert','update','delete'],
+ monthly_reviews:['select','insert','update']
 };
 // 브라우저가 호출할 수 있는 함수: 인자 이름·타입과 반환 형태(row=객체, rows=배열, void=null)
 export const RPCS={

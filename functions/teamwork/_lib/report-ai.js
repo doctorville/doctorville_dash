@@ -4,6 +4,7 @@
 import {applyCors,bearer,readBody} from './http.js';
 import {verifyRequestToken} from './auth.js';
 import {withUser,execute,errorBody} from './db.js';
+import {runMonthlyReview} from './monthly-review.js';
 import {summaryInstructions,metricHighlights,taskDigest,sourceBoundSchema,validSummary,executiveSchema,executiveInstructions,executiveMetrics,validExecutive} from './summary.js';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // DB 접근(테스트에서 바꿔 끼울 수 있음). 모두 호출자 권한(RLS)으로 실행합니다.
@@ -24,6 +25,7 @@ export async function callOpenAI({apiKey,model,instructions,input,maxTokens,name
 }
 
 export async function runReportAI({user,body,env=process.env,fetchImpl=fetch,store=dbStore}){
+ if(body?.mode==='monthly-review')return runMonthlyReview({user,body,env,fetchImpl,callOpenAI});
  const rpc=store.rpc;
  if(typeof body?.document_id!=='string'||!UUID.test(body.document_id))return [400,{error:'잘못된 문서입니다.'}];
  const apiKey=env.OPENAI_API_KEY,model=env.OPENAI_REPORT_MODEL||'gpt-4.1-mini';
